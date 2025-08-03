@@ -360,44 +360,42 @@ export const Footer: React.FC = () => {
             </motion.div>
 
             {/* Enhanced Contact & Newsletter */}
-            <motion.div variants={itemVariants} className="space-y-8">
+            <motion.div variants={itemVariants} className="space-y-6">
               <h4 className="text-2xl font-bold text-white flex items-center gap-3">
                 <Mail className="h-6 w-6 text-purple-400" />
                 Get In Touch
               </h4>
 
-              {/* Contact Persons */}
+              {/* Contact Persons - Fixed Layout */}
               <div className="space-y-4">
                 {contactPersons.map((person, index) => (
                   <motion.div
                     key={person.name}
-                    className="group bg-white/5 backdrop-blur-md rounded-2xl p-6 border border-white/10 hover:border-white/20 transition-all duration-300"
-                    whileHover={{ scale: 1.02, y: -2 }}
+                    className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10 hover:border-white/20 transition-all duration-300"
+                    whileHover={{ scale: 1.01 }}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 + index * 0.1 }}
                   >
-                    <div className="flex items-start gap-4">
-                      <div className={`p-3 bg-gradient-to-r ${person.color} rounded-xl`}>{person.icon}</div>
-                      <div className="flex-1">
-                        <h5 className="text-white font-bold mb-1">{person.title}</h5>
-                        <p className="text-white/90 font-semibold mb-1">{person.name}</p>
-                        <p className="text-white/60 text-sm mb-3">{person.position}</p>
-                        <div className="space-y-2">
-                          <motion.div
-                            className="flex items-center gap-3 text-white/70 hover:text-blue-400 transition-colors duration-300"
-                            whileHover={{ x: 5 }}
-                          >
-                            <Mail className="h-4 w-4 text-blue-400 flex-shrink-0" />
-                            <span className="text-sm font-medium">{person.email}</span>
-                          </motion.div>
-                          <motion.div
-                            className="flex items-center gap-3 text-white/70 hover:text-emerald-400 transition-colors duration-300"
-                            whileHover={{ x: 5 }}
-                          >
-                            <Phone className="h-4 w-4 text-emerald-400 flex-shrink-0" />
-                            <span className="text-sm font-medium">{person.phone}</span>
-                          </motion.div>
+                    <div className="space-y-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 bg-gradient-to-r ${person.color} rounded-lg`}>
+                          {person.icon}
+                        </div>
+                        <div>
+                          <h5 className="text-white font-bold text-sm">{person.title}</h5>
+                          <p className="text-white/90 font-semibold text-sm">{person.name}</p>
+                        </div>
+                      </div>
+                      <p className="text-white/60 text-xs">{person.position}</p>
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-white/70">
+                          <Mail className="h-3 w-3 text-blue-400 flex-shrink-0" />
+                          <span className="text-xs">{person.email}</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-white/70">
+                          <Phone className="h-3 w-3 text-emerald-400 flex-shrink-0" />
+                          <span className="text-xs">{person.phone}</span>
                         </div>
                       </div>
                     </div>
@@ -405,58 +403,51 @@ export const Footer: React.FC = () => {
                 ))}
               </div>
 
-              {/* General Contact */}
-              <div className="bg-gradient-to-r from-slate-800/50 to-slate-700/50 backdrop-blur-md rounded-2xl p-6 border border-white/10">
-                <h5 className="text-white font-bold mb-4 flex items-center gap-2">
-                  <Globe className="h-5 w-5 text-purple-400" />
+              {/* General Contact - Simplified */}
+              <div className="bg-white/5 backdrop-blur-md rounded-xl p-4 border border-white/10">
+                <h5 className="text-white font-bold mb-3 flex items-center gap-2 text-sm">
+                  <Globe className="h-4 w-4 text-purple-400" />
                   General Information
                 </h5>
-                <div className="space-y-3">
-                  <motion.div
-                    className="flex items-center gap-3 text-white/70 hover:text-purple-400 transition-colors duration-300"
-                    whileHover={{ x: 5 }}
-                  >
-                    <Mail className="h-4 w-4 text-purple-400 flex-shrink-0" />
-                    <span className="text-sm font-medium">fsnconference@cuisahiwal.edu.pk</span>
-                  </motion.div>
-                  <motion.div
-                    className="flex items-start gap-3 text-white/70 hover:text-purple-400 transition-colors duration-300"
-                    whileHover={{ x: 5 }}
-                  >
-                    <MapPin className="h-4 w-4 text-purple-400 flex-shrink-0 mt-0.5" />
-                    <span className="text-sm font-medium">
-                      COMSATS University Islamabad, Sahiwal Campus
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-white/70">
+                    <Mail className="h-3 w-3 text-purple-400 flex-shrink-0" />
+                    <span className="text-xs">fsnconference@cuisahiwal.edu.pk</span>
+                  </div>
+                  <div className="flex items-start gap-2 text-white/70">
+                    <MapPin className="h-3 w-3 text-purple-400 flex-shrink-0 mt-0.5" />
+                    <span className="text-xs">
+                      COMSATS University Sahiwal
                       <br />
                       Sahiwal, Pakistan
                     </span>
-                  </motion.div>
+                  </div>
                 </div>
               </div>
 
-              {/* Enhanced Newsletter */}
-              <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-md rounded-2xl p-6 border border-blue-500/20">
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <Heart className="h-6 w-6 text-pink-400" />
-                    <h5 className="font-bold text-white text-lg">Stay Updated</h5>
+              {/* Newsletter - Compact */}
+              <div className="bg-gradient-to-r from-blue-600/20 to-indigo-600/20 backdrop-blur-md rounded-xl p-4 border border-blue-500/20">
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2">
+                    <Heart className="h-4 w-4 text-pink-400" />
+                    <h5 className="font-bold text-white text-sm">Stay Updated</h5>
                   </div>
-                  <p className="text-white/70 text-sm leading-relaxed">
-                    Subscribe to receive the latest conference updates, announcements, and exclusive content directly in
-                    your inbox.
+                  <p className="text-white/70 text-xs">
+                    Subscribe for conference updates and announcements.
                   </p>
-                  <form onSubmit={handleNewsletterSubmit} className="space-y-3">
+                  <form onSubmit={handleNewsletterSubmit} className="space-y-2">
                     <Input
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Enter your email address"
-                      className="bg-white/10 backdrop-blur-md border-white/20 text-white placeholder-white/50 focus:border-blue-400 rounded-xl h-12"
+                      placeholder="Enter your email"
+                      className="bg-white/10 backdrop-blur-md border-white/20 text-white placeholder-white/50 focus:border-blue-400 rounded-lg h-10 text-sm"
                       required
                     />
                     <Button
                       type="submit"
                       disabled={isSubscribing}
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-xl"
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-2 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 text-sm"
                     >
                       <motion.div className="flex items-center justify-center gap-2">
                         {isSubscribing ? (
@@ -465,20 +456,14 @@ export const Footer: React.FC = () => {
                               animate={{ rotate: 360 }}
                               transition={{ duration: 1, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
                             >
-                              <Zap className="h-4 w-4" />
+                              <Zap className="h-3 w-3" />
                             </motion.div>
                             Subscribing...
                           </>
                         ) : (
                           <>
-                            <Send className="h-4 w-4" />
-                            Subscribe Now
-                            <motion.div
-                              animate={{ x: [0, 3, 0] }}
-                              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-                            >
-                              <ArrowUp className="h-4 w-4 rotate-45" />
-                            </motion.div>
+                            <Send className="h-3 w-3" />
+                            Subscribe
                           </>
                         )}
                       </motion.div>
@@ -496,7 +481,7 @@ export const Footer: React.FC = () => {
           >
             <div className="text-center lg:text-left space-y-2">
               <p className="text-white/60 text-sm font-medium">
-                © {new Date().getFullYear()} Food Science & Nutrition Conference (FSNC). All rights reserved.
+                &copy; {new Date().getFullYear()} Food Science & Nutrition Conference (FSNC). All rights reserved.
               </p>
               <p className="text-white/40 text-xs flex items-center justify-center lg:justify-start gap-2">
                 Designed with <Heart className="h-3 w-3 text-pink-400" /> for the future of food science
