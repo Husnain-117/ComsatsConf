@@ -7,7 +7,7 @@ import { Button } from "@/Components/ui/button"
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/Components/ui/dropdown-menu"
 import { Sheet, SheetTrigger, SheetContent } from "@/Components/ui/sheet"
 import { Input } from "@/Components/ui/input"
-import { MenuIcon, XIcon, ChevronDown, Zap, Search } from "lucide-react"
+import { MenuIcon,  ChevronDown, Zap, Search } from "lucide-react"
 
 interface NavigationItem {
   label: string
