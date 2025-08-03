@@ -201,74 +201,92 @@ export const Registration: React.FC = () => {
             </span>
           </motion.h2>
           <motion.p variants={item} className="text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium">
-            Secure your spot at the premier event for digital innovators. Join industry leaders, researchers, and
-            visionaries shaping the future of technology.
+            Join us for an extraordinary conference experience. Choose your registration category and secure your spot
+            today.
           </motion.p>
         </motion.div>
 
-        {/* Pricing Cards */}
-        <motion.div variants={item} className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+        {/* Enhanced Registration Categories */}
+        <motion.div variants={item} className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
           {categories.map((category, index) => (
             <motion.div
               key={category.type}
               variants={cardVariants}
-              className={`relative bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden group cursor-pointer ${
-                category.popular ? "ring-2 ring-blue-500 ring-offset-4 ring-offset-transparent" : ""
+              className={`group relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border-2 ${
+                category.borderColor
+              } overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-3xl ${
+                category.popular ? "ring-4 ring-blue-500 ring-offset-4 ring-offset-transparent scale-105" : ""
               }`}
-              whileHover={{ scale: 1.05, y: -10 }}
+              whileHover={{ scale: category.popular ? 1.08 : 1.05, y: -8 }}
+              whileTap={{ scale: 0.98 }}
+              onClick={() => handleRegisterClick(category.type)}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
             >
               {category.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg z-10">
                   Most Popular
                 </div>
               )}
 
-              <div className={`bg-gradient-to-r ${category.color} p-8 text-white relative overflow-hidden`}>
+              {/* Header */}
+              <div className={`relative bg-gradient-to-br ${category.color} p-8 text-white overflow-hidden`}>
                 <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full -translate-y-16 translate-x-16" />
-                <div className="relative z-10">
-                  <div className="flex items-center justify-between mb-6">
-                    <motion.div
-                      className="text-white/80"
-                      whileHover={{ scale: 1.2, rotate: 15 }}
-                      transition={{ type: "spring", stiffness: 400 }}
-                    >
-                      {category.icon}
-                    </motion.div>
-                    <div className="text-right">
-                      <motion.div
-                        className="text-4xl font-black"
-                        animate={{ scale: [1, 1.05, 1] }}
-                        transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY }}
-                      >
-                        {category.early}
-                      </motion.div>
-                      <div className="text-sm opacity-80">Early Bird</div>
-                    </div>
-                  </div>
-                  <h3 className="text-2xl font-bold mb-3">{category.type}</h3>
-                  <p className="text-white/80 text-sm">
-                    Regular price:{" "}
-                    <span className={category.regular !== "–" ? "line-through" : ""}>{category.regular}</span>
-                  </p>
+                <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full translate-y-12 -translate-x-12" />
+                
+                <div className="relative z-10 text-center space-y-4">
+                  <motion.div
+                    className="flex justify-center mb-4"
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                    transition={{ type: "spring", stiffness: 400 }}
+                  >
+                    {category.icon}
+                  </motion.div>
+                  <h3 className="text-xl font-bold leading-tight">{category.type}</h3>
                 </div>
               </div>
 
-              <div className="p-8">
+              {/* Content */}
+              <div className="p-8 space-y-6">
+                <div className="space-y-4">
+                  <div className="text-center">
+                    <div className="text-3xl font-black text-slate-800 mb-2">{category.early}</div>
+                    <div className="text-sm text-slate-600 font-medium">Early Bird Rate</div>
+                    {category.regular !== "–" && (
+                      <div className="mt-2">
+                        <div className="text-lg font-bold text-slate-500 line-through">{category.regular}</div>
+                        <div className="text-xs text-slate-500">Regular Rate</div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-bold text-slate-800 text-sm">Includes:</h4>
+                  <ul className="space-y-2">
+                    {commonBenefits.slice(0, 4).map((benefit, idx) => (
+                      <li key={idx} className="flex items-center gap-2 text-xs text-slate-600">
+                        <CheckCircle className="h-3 w-3 text-green-500 flex-shrink-0" />
+                        {benefit}
+                      </li>
+                    ))}
+                    <li className="text-xs text-slate-500 italic">+ {commonBenefits.length - 4} more benefits</li>
+                  </ul>
+                </div>
+
                 <Button
+                  className={`w-full bg-gradient-to-r ${category.color} text-white font-bold py-3 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105`}
                   onClick={() => handleRegisterClick(category.type)}
-                  className={`w-full bg-gradient-to-r ${category.color} text-white font-bold py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105`}
                 >
                   <motion.div className="flex items-center justify-center gap-2">
-                    <UserPlus className="h-5 w-5" />
+                    <UserPlus className="w-4 h-4" />
                     Register Now
                     <motion.div
                       animate={{ x: [0, 5, 0] }}
                       transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
                     >
-                      <ArrowRight className="h-5 w-5" />
+                      <ArrowRight className="w-4 h-4" />
                     </motion.div>
                   </motion.div>
                 </Button>
@@ -277,14 +295,14 @@ export const Registration: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Registration Form Modal */}
+        {/* Enhanced Registration Form Modal */}
         <AnimatePresence>
           {showForm && (
             <motion.div
+              className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
               onClick={handleCloseForm}
             >
               <motion.div
@@ -292,296 +310,404 @@ export const Registration: React.FC = () => {
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                className="bg-white rounded-3xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+                className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
                 onClick={(e) => e.stopPropagation()}
               >
-                <div className="sticky top-0 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6 rounded-t-3xl z-10">
+                {/* Enhanced Form Header */}
+                <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 p-8 text-white">
                   <div className="flex items-center justify-between">
-                    <div>
-                      <h3 className="text-xl font-bold">FSNC 2025 Registration</h3>
-                      <p className="text-blue-100 text-sm">Category: {selectedCategory}</p>
+                    <div className="flex items-center gap-4">
+                      <motion.div
+                        className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm"
+                        whileHover={{ rotate: 15, scale: 1.1 }}
+                      >
+                        <UserPlus className="h-8 w-8" />
+                      </motion.div>
+                      <div>
+                        <h3 className="text-2xl font-bold">Conference Registration</h3>
+                        <p className="text-blue-100">Food Science & Nutrition Conference 2025</p>
+                        <div className="flex items-center gap-2 mt-2">
+                          <div className="px-3 py-1 bg-white/20 rounded-full text-sm font-medium">
+                            {selectedCategory}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={handleCloseForm}
-                      className="text-white hover:bg-white/20 rounded-full p-2"
+                      className="text-white hover:bg-white/20 rounded-full p-3 transition-all duration-300"
                     >
-                      <X className="h-5 w-5" />
+                      <X className="h-6 w-6" />
                     </Button>
                   </div>
                 </div>
 
-                <div className="p-6 space-y-6">
-                  {/* Personal Information */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                      <User className="h-5 w-5 text-blue-600" />
-                      Personal Information
-                    </h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="fullName" className="text-sm font-medium">
-                          Full Name *
-                        </Label>
-                        <Input
-                          id="fullName"
-                          value={formData.fullName}
-                          onChange={(e) => handleInputChange("fullName", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Enter your complete full name"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email" className="text-sm font-medium">
-                          Email Address *
-                        </Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange("email", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="your.email@example.com"
-                        />
-                        <p className="text-xs text-slate-500 mt-1">
-                          We'll send confirmation and updates to this email address
-                        </p>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone" className="text-sm font-medium">
-                          Phone (WhatsApp) *
-                        </Label>
-                        <Input
-                          id="phone"
-                          value={formData.phone}
-                          onChange={(e) => handleInputChange("phone", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="+92 300 1234567 (WhatsApp preferred)"
-                        />
-                        <p className="text-xs text-slate-500 mt-1">WhatsApp number preferred for quick communication</p>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="cityCountry" className="text-sm font-medium">
-                          City & Country *
-                        </Label>
-                        <Input
-                          id="cityCountry"
-                          value={formData.cityCountry}
-                          onChange={(e) => handleInputChange("cityCountry", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="e.g., Lahore, Pakistan"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Professional Information */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                      <Building className="h-5 w-5 text-blue-600" />
-                      Professional Information
-                    </h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="organization" className="text-sm font-medium">
-                          Organization *
-                        </Label>
-                        <Input
-                          id="organization"
-                          value={formData.organization}
-                          onChange={(e) => handleInputChange("organization", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Your university, company, or institution"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="department" className="text-sm font-medium">
-                          Department *
-                        </Label>
-                        <Input
-                          id="department"
-                          value={formData.department}
-                          onChange={(e) => handleInputChange("department", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Department or division name"
-                        />
-                      </div>
-                      <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="designation" className="text-sm font-medium">
-                          Designation *
-                        </Label>
-                        <Input
-                          id="designation"
-                          value={formData.designation}
-                          onChange={(e) => handleInputChange("designation", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Your current position or title"
-                        />
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Conference Details */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                      <Calendar className="h-5 w-5 text-blue-600" />
-                      Conference Details
-                    </h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Participation Mode *</Label>
-                        <Select onValueChange={(value) => handleInputChange("participationMode", value)}>
-                          <SelectTrigger className="rounded-lg border-slate-300 h-10">
-                            <SelectValue placeholder="Select mode" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="oral">Oral Presentation</SelectItem>
-                            <SelectItem value="poster">Poster Presentation</SelectItem>
-                            <SelectItem value="participant">Participant Only</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Cultural Visit to Harappa? *</Label>
-                        <Select onValueChange={(value) => handleInputChange("culturalVisit", value)}>
-                          <SelectTrigger className="rounded-lg border-slate-300 h-10">
-                            <SelectValue placeholder="Select option" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="yes">Yes</SelectItem>
-                            <SelectItem value="no">No</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Payment Information */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                      <DollarSign className="h-5 w-5 text-blue-600" />
-                      Payment Information
-                    </h4>
-                    <div className="grid md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="totalFee" className="text-sm font-medium">
-                          Total Fee Paid *
-                        </Label>
-                        <Input
-                          id="totalFee"
-                          value={formData.totalFee}
-                          onChange={(e) => handleInputChange("totalFee", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Enter amount paid (e.g., Rs. 2000)"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="transactionId" className="text-sm font-medium">
-                          Transaction ID *
-                        </Label>
-                        <Input
-                          id="transactionId"
-                          value={formData.transactionId}
-                          onChange={(e) => handleInputChange("transactionId", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Bank reference or transaction number"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="paymentDate" className="text-sm font-medium">
-                          Payment Date *
-                        </Label>
-                        <Input
-                          id="paymentDate"
-                          type="date"
-                          value={formData.paymentDate}
-                          onChange={(e) => handleInputChange("paymentDate", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="bankName" className="text-sm font-medium">
-                          Bank Name *
-                        </Label>
-                        <Input
-                          id="bankName"
-                          value={formData.bankName}
-                          onChange={(e) => handleInputChange("bankName", e.target.value)}
-                          className="rounded-lg border-slate-300 focus:border-blue-500 h-10"
-                          placeholder="Name of your bank (e.g., HBL, UBL)"
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Upload Payment Proof *</Label>
-                      <div className="border-2 border-dashed border-slate-300 rounded-lg p-4 text-center hover:border-blue-500 transition-colors">
-                        <Upload className="h-6 w-6 text-slate-400 mx-auto mb-2" />
-                        <p className="text-slate-600 text-sm">Click to upload (JPG, PNG, PDF)</p>
-                        <input
-                          type="file"
-                          accept=".jpg,.jpeg,.png,.pdf"
-                          onChange={(e) => handleInputChange("proofOfPayment", e.target.files?.[0] || null)}
-                          className="hidden"
-                        />
-                      </div>
-                      <p className="text-xs text-slate-500 mt-2">
-                        Accepted formats: JPG, PNG, PDF (Max size: 5MB). Please ensure the transaction details are
-                        clearly visible.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Consent */}
-                  <div className="space-y-4">
-                    <h4 className="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-200 pb-2">
-                      <CheckCircle className="h-5 w-5 text-blue-600" />
-                      Consent
-                    </h4>
-                    <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <Checkbox
-                          id="confirmAccuracy"
-                          checked={formData.confirmAccuracy}
-                          onCheckedChange={(checked) => handleInputChange("confirmAccuracy", checked as boolean)}
-                          className="mt-1"
-                        />
-                        <Label htmlFor="confirmAccuracy" className="text-sm leading-relaxed">
-                          I confirm that the information provided is accurate.
-                        </Label>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <Checkbox
-                          id="agreeConduct"
-                          checked={formData.agreeConduct}
-                          onCheckedChange={(checked) => handleInputChange("agreeConduct", checked as boolean)}
-                          className="mt-1"
-                        />
-                        <Label htmlFor="agreeConduct" className="text-sm leading-relaxed">
-                          I agree to abide by the code of conduct of FSNC 2025.
-                        </Label>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-4 border-t border-slate-200">
-                    <Button
-                      size="lg"
-                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300"
-                      disabled={!formData.confirmAccuracy || !formData.agreeConduct}
+                {/* Enhanced Form Content */}
+                <div className="max-h-[calc(90vh-200px)] overflow-y-auto">
+                  <div className="p-8 space-y-8">
+                    {/* Personal Information Section */}
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1 }}
                     >
-                      <motion.div className="flex items-center justify-center gap-2">
-                        <CheckCircle className="h-5 w-5" />
-                        Submit Registration
-                        <motion.div
-                          animate={{ x: [0, 3, 0] }}
-                          transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-                        >
-                          <ArrowRight className="h-5 w-5" />
+                      <div className="flex items-center gap-3 pb-4 border-b-2 border-blue-100">
+                        <div className="p-3 bg-blue-100 rounded-2xl">
+                          <User className="h-6 w-6 text-blue-600" />
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold text-slate-800">Personal Information</h4>
+                          <p className="text-slate-600 text-sm">Please provide your personal details</p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="fullName" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <User className="h-4 w-4 text-blue-600" />
+                            Full Name *
+                          </Label>
+                          <Input
+                            id="fullName"
+                            value={formData.fullName}
+                            onChange={(e) => handleInputChange("fullName", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                            placeholder="Enter your complete full name"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="email" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <CreditCard className="h-4 w-4 text-blue-600" />
+                            Email Address *
+                          </Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => handleInputChange("email", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                            placeholder="your.email@example.com"
+                          />
+                          <p className="text-xs text-slate-500 flex items-center gap-1">
+                            <CheckCircle className="h-3 w-3 text-green-500" />
+                            We'll send confirmation and updates to this email
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="phone" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Zap className="h-4 w-4 text-blue-600" />
+                            Phone (WhatsApp) *
+                          </Label>
+                          <Input
+                            id="phone"
+                            value={formData.phone}
+                            onChange={(e) => handleInputChange("phone", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                            placeholder="+92 300 1234567"
+                          />
+                          <p className="text-xs text-slate-500 flex items-center gap-1">
+                            <CheckCircle className="h-3 w-3 text-green-500" />
+                            WhatsApp number preferred for quick communication
+                          </p>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="cityCountry" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Building className="h-4 w-4 text-blue-600" />
+                            City & Country *
+                          </Label>
+                          <Input
+                            id="cityCountry"
+                            value={formData.cityCountry}
+                            onChange={(e) => handleInputChange("cityCountry", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 transition-all duration-300"
+                            placeholder="e.g., Lahore, Pakistan"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Professional Information Section */}
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.2 }}
+                    >
+                      <div className="flex items-center gap-3 pb-4 border-b-2 border-emerald-100">
+                        <div className="p-3 bg-emerald-100 rounded-2xl">
+                          <Building className="h-6 w-6 text-emerald-600" />
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold text-slate-800">Professional Information</h4>
+                          <p className="text-slate-600 text-sm">Tell us about your professional background</p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="organization" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Building className="h-4 w-4 text-emerald-600" />
+                            Organization *
+                          </Label>
+                          <Input
+                            id="organization"
+                            value={formData.organization}
+                            onChange={(e) => handleInputChange("organization", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
+                            placeholder="Your university, company, or institution"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="department" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Users className="h-4 w-4 text-emerald-600" />
+                            Department *
+                          </Label>
+                          <Input
+                            id="department"
+                            value={formData.department}
+                            onChange={(e) => handleInputChange("department", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
+                            placeholder="Department or division name"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2 md:col-span-2">
+                          <Label htmlFor="designation" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Award className="h-4 w-4 text-emerald-600" />
+                            Designation *
+                          </Label>
+                          <Input
+                            id="designation"
+                            value={formData.designation}
+                            onChange={(e) => handleInputChange("designation", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 transition-all duration-300"
+                            placeholder="Your current position or title"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Conference Options Section */}
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                    >
+                      <div className="flex items-center gap-3 pb-4 border-b-2 border-purple-100">
+                        <div className="p-3 bg-purple-100 rounded-2xl">
+                          <Calendar className="h-6 w-6 text-purple-600" />
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold text-slate-800">Conference Options</h4>
+                          <p className="text-slate-600 text-sm">Customize your conference experience</p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Users className="h-4 w-4 text-purple-600" />
+                            Participation Mode *
+                          </Label>
+                          <Select onValueChange={(value) => handleInputChange("participationMode", value)}>
+                            <SelectTrigger className="h-12 rounded-xl border-2 border-slate-200 focus:border-purple-500">
+                              <SelectValue placeholder="Select participation mode" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="in-person">In-Person Attendance</SelectItem>
+                              <SelectItem value="virtual">Virtual Attendance</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-purple-600" />
+                            Cultural Visit *
+                          </Label>
+                          <Select onValueChange={(value) => handleInputChange("culturalVisit", value)}>
+                            <SelectTrigger className="h-12 rounded-xl border-2 border-slate-200 focus:border-purple-500">
+                              <SelectValue placeholder="Join cultural visit?" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="yes">Yes, I want to join</SelectItem>
+                              <SelectItem value="no">No, thank you</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Payment Information Section */}
+                    <motion.div 
+                      className="space-y-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4 }}
+                    >
+                      <div className="flex items-center gap-3 pb-4 border-b-2 border-orange-100">
+                        <div className="p-3 bg-orange-100 rounded-2xl">
+                          <DollarSign className="h-6 w-6 text-orange-600" />
+                        </div>
+                        <div>
+                          <h4 className="text-xl font-bold text-slate-800">Payment Information</h4>
+                          <p className="text-slate-600 text-sm">Provide your payment details</p>
+                        </div>
+                      </div>
+                      
+                      <div className="grid md:grid-cols-2 gap-6">
+                        <div className="space-y-2">
+                          <Label htmlFor="totalFee" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <DollarSign className="h-4 w-4 text-orange-600" />
+                            Total Fee Paid *
+                          </Label>
+                          <Input
+                            id="totalFee"
+                            value={formData.totalFee}
+                            onChange={(e) => handleInputChange("totalFee", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300"
+                            placeholder="Enter amount paid (e.g., Rs. 2000)"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="transactionId" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <CreditCard className="h-4 w-4 text-orange-600" />
+                            Transaction ID *
+                          </Label>
+                          <Input
+                            id="transactionId"
+                            value={formData.transactionId}
+                            onChange={(e) => handleInputChange("transactionId", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300"
+                            placeholder="Bank reference or transaction number"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="paymentDate" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-orange-600" />
+                            Payment Date *
+                          </Label>
+                          <Input
+                            id="paymentDate"
+                            type="date"
+                            value={formData.paymentDate}
+                            onChange={(e) => handleInputChange("paymentDate", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300"
+                          />
+                        </div>
+                        
+                        <div className="space-y-2">
+                          <Label htmlFor="bankName" className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                            <Building className="h-4 w-4 text-orange-600" />
+                            Bank Name *
+                          </Label>
+                          <Input
+                            id="bankName"
+                            value={formData.bankName}
+                            onChange={(e) => handleInputChange("bankName", e.target.value)}
+                            className="h-12 rounded-xl border-2 border-slate-200 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 transition-all duration-300"
+                            placeholder="Name of your bank (e.g., HBL, UBL)"
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* File Upload */}
+                      <div className="space-y-3">
+                        <Label className="text-sm font-semibold text-slate-700 flex items-center gap-2">
+                          <Upload className="h-4 w-4 text-orange-600" />
+                          Payment Proof *
+                        </Label>
+                        <div className="border-2 border-dashed border-slate-300 rounded-xl p-8 text-center hover:border-orange-400 transition-colors duration-300">
+                          <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+                          <p className="text-slate-600 font-medium mb-2">Upload payment screenshot or receipt</p>
+                          <p className="text-xs text-slate-500 mb-4">
+                            Accepted formats: JPG, PNG, PDF (Max size: 5MB)
+                          </p>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="border-orange-300 text-orange-600 hover:bg-orange-50"
+                          >
+                            Choose File
+                          </Button>
+                          <input
+                            type="file"
+                            accept=".jpg,.jpeg,.png,.pdf"
+                            onChange={(e) => handleInputChange("proofOfPayment", e.target.files?.[0] || null)}
+                            className="hidden"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Terms and Conditions */}
+                    <motion.div 
+                      className="space-y-4 p-6 bg-slate-50 rounded-2xl"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.5 }}
+                    >
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3">
+                          <Checkbox
+                            id="confirmAccuracy"
+                            checked={formData.confirmAccuracy}
+                            onCheckedChange={(checked) => handleInputChange("confirmAccuracy", checked)}
+                            className="mt-1"
+                          />
+                          <Label htmlFor="confirmAccuracy" className="text-sm text-slate-700 leading-relaxed">
+                            I confirm that all the information provided above is accurate and complete to the best of my knowledge.
+                          </Label>
+                        </div>
+                        
+                        <div className="flex items-start gap-3">
+                          <Checkbox
+                            id="agreeConduct"
+                            checked={formData.agreeConduct}
+                            onCheckedChange={(checked) => handleInputChange("agreeConduct", checked)}
+                            className="mt-1"
+                          />
+                          <Label htmlFor="agreeConduct" className="text-sm text-slate-700 leading-relaxed">
+                            I agree to abide by the conference code of conduct and understand that any violation may result in removal from the event.
+                          </Label>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Submit Button */}
+                    <motion.div 
+                      className="pt-6"
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.6 }}
+                    >
+                      <Button
+                        type="submit"
+                        className="w-full h-14 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+                        disabled={!formData.confirmAccuracy || !formData.agreeConduct}
+                      >
+                        <motion.div className="flex items-center justify-center gap-3">
+                          <CheckCircle className="w-6 h-6" />
+                          Complete Registration
+                          <motion.div
+                            animate={{ x: [0, 5, 0] }}
+                            transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
+                          >
+                            <ArrowRight className="w-6 h-6" />
+                          </motion.div>
                         </motion.div>
-                      </motion.div>
-                    </Button>
+                      </Button>
+                    </motion.div>
                   </div>
                 </div>
               </motion.div>
