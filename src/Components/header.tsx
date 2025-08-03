@@ -1,7 +1,6 @@
 "use client"
-
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence, type Variants } from "framer-motion"
 import { useSpring, animated } from "@react-spring/web"
 import { Button } from "@/Components/ui/button"
@@ -24,48 +23,36 @@ const navigationSections: NavigationSection[] = [
   {
     title: "Conference",
     items: [
-      { label: "Home", href: "/" },
-      { label: "Call for Papers", href: "/call-for-papers" },
-      { label: "Program", href: "/program" },
-    ],
-  },
-  {
-    title: "People",
-    items: [
-      { label: "Speakers", href: "/speakers" },
-      { label: "Organizers", href: "/organizers" },
+      { label: "Program", href: "#program" },
+      { label: "Speakers", href: "#speakers" },
     ],
   },
   {
     title: "Participation",
     items: [
-      { label: "Registration", href: "/registration" },
-      { label: "Abstract Guidelines", href: "/abstract-guidelines" },
+      { label: "Registration", href: "#registration" },
+      { label: "Call for Papers", href: "#call-for-papers" },
+      { label: "Abstract Guidelines", href: "#abstract-guidelines" },
     ],
   },
   {
     title: "Information",
     items: [
-      { label: "Gallery", href: "/gallery" },
-      { label: "Accommodation & Travel", href: "/accommodation" },
-      { label: "Contact Us", href: "/contact" },
+      { label: "Organizers", href: "#organizers" },
+      { label: "Gallery", href: "#gallery" },
+      { label: "Accommodation", href: "#accommodation" },
     ],
+  },
+  {
+    title: "Contact",
+    items: [{ label: "Contact Us", href: "#contact" }],
   },
 ]
 
 /* -------------------------------------------------------------------------- */
 /*                               Animation variants                           */
 /* -------------------------------------------------------------------------- */
-const menuVariants: Variants = {
-  hidden: { opacity: 0, y: -10, scale: 0.97 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.25, ease: [0.4, 0, 0.2, 1], staggerChildren: 0.06 },
-  },
-  exit: { opacity: 0, y: -10, scale: 0.97, transition: { duration: 0.2 } },
-}
+
 
 const menuItemVariants: Variants = {
   hidden: { opacity: 0, x: -12 },
@@ -73,7 +60,7 @@ const menuItemVariants: Variants = {
 }
 
 const buttonVariants: Variants = {
-  hover: { y: -2, scale: 1.02 }, // More pronounced hover
+  hover: { y: -2, scale: 1.02 },
   tap: { y: 0, scale: 0.98 },
 }
 
@@ -83,20 +70,40 @@ const Header: React.FC = () => {
   /*                                   STATE                                  */
   /* ---------------------------------------------------------------------- */
   const [anchorOpen, setAnchorOpen] = useState<Record<string, boolean>>({})
-  // searchOpen state removed; search input is always visible
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false)
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({})
+  const [scrolled, setScrolled] = useState(false)
+
+  /* ---------------------------------------------------------------------- */
+  /*                                SCROLL EFFECT                             */
+  /* ---------------------------------------------------------------------- */
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50)
+    }
+    window.addEventListener("scroll", handleScroll)
+    return () => window.removeEventListener("scroll", handleScroll)
+  }, [])
 
   /* ---------------------------------------------------------------------- */
   /*                                SPRING ANI                                */
   /* ---------------------------------------------------------------------- */
   const logoSpring = useSpring({
-    from: { opacity: 0, transform: "translateY(-20px)" }, // More initial animation
+    from: { opacity: 0, transform: "translateY(-20px)" },
     to: { opacity: 1, transform: "translateY(0px)" },
-    config: { tension: 250, friction: 20 }, // Slightly stiffer spring
+    config: { tension: 250, friction: 20 },
   })
 
-  // searchSpring removed; search input static
+  const headerSpring = useSpring({
+    backgroundColor: scrolled
+      ? "rgba(15, 23, 42, 0.95)" // slate-900 with opacity
+      : "rgba(30, 41, 59, 0.90)", // slate-800 with opacity
+    backdropFilter: scrolled ? "blur(20px)" : "blur(16px)",
+    borderColor: scrolled
+      ? "rgba(59, 130, 246, 0.3)" // blue-500 with opacity
+      : "rgba(99, 102, 241, 0.2)", // indigo-500 with opacity
+    config: { tension: 300, friction: 30 },
+  })
 
   /* ---------------------------------------------------------------------- */
   /*                               EVENT HANDLERS                             */
@@ -104,39 +111,55 @@ const Header: React.FC = () => {
   const toggleSection = (title: string, stateSetter: typeof setAnchorOpen) =>
     stateSetter((p) => ({ ...p, [title]: !p[title] }))
 
+  const smoothScroll = (href: string) => {
+    if (href.startsWith("#")) {
+      const element = document.querySelector(href)
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" })
+      }
+    }
+  }
+
   /* ---------------------------------------------------------------------- */
   /*                                    UI                                    */
   /* ---------------------------------------------------------------------- */
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-[#3a2661]/90 via-[#503a7d]/90 to-[#3a2661]/90 border-b border-[#b7a6e9]/30 shadow-2xl backdrop-blur-lg">
+      <animated.header
+        style={headerSpring}
+        className="fixed top-0 left-0 right-0 z-50 border-b shadow-2xl transition-all duration-300"
+      >
         <div className="container mx-auto flex h-20 items-center justify-between px-6 py-5 relative">
           {/* Logo --------------------------------------------------------- */}
           <animated.div style={logoSpring} className="flex-shrink-0 z-10">
             <motion.a
-              href="/"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                cursor: "pointer",
-                fontFamily: "Inter, sans-serif",
-                fontSize: 26,
-                fontWeight: 700,
-                letterSpacing: "-0.01em",
-                color: "#BCEDF6",
-                transition: "transform 0.3s",
+              href="#hero"
+              onClick={(e) => {
+                e.preventDefault()
+                smoothScroll("#hero")
               }}
-              whileHover={{ scale: 1.05, rotate: 5 }}
+              className="flex items-center gap-3 cursor-pointer"
+              whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Zap style={{ height: 28, width: 28, color: "#BCEDF6" }} />
-              <span>TechSummit 2025</span>
+              <motion.div
+                className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl shadow-lg"
+                whileHover={{ rotate: 10 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              >
+                <Zap className="h-6 w-6 text-white" />
+              </motion.div>
+              <div className="flex flex-col">
+                <span className="text-xl font-black text-white leading-tight">COMSATS Conf</span>
+                
+              </div>
             </motion.a>
           </animated.div>
 
+
+
           {/* Desktop nav - Centered -------------------------------------------------- */}
-          <div className="flex flex-1 items-center justify-center gap-6">
+          <div className="hidden lg:flex flex-1 items-center justify-center gap-2">
             {navigationSections.map((section, i) => (
               <motion.div
                 key={section.title}
@@ -149,23 +172,42 @@ const Header: React.FC = () => {
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
-                        className="relative rounded-lg px-4 py-2 text-base font-medium normal-case text-[#cbd5ff] transition-all duration-300 hover:-translate-y-px hover:bg-[#412963]/40 hover:text-[#b7a6e9] before:absolute before:bottom-0 before:left-1/2 before:h-[2px] before:w-0 before:-translate-x-1/2 before:bg-gradient-to-r before:from-cyan-400 before:via-purple-400 before:to-pink-400 before:transition-all before:duration-300 hover:before:w-3/4"
+                        className="relative rounded-xl px-4 py-2 text-sm font-semibold text-slate-200 transition-all duration-300 hover:bg-white/10 hover:text-white hover:shadow-lg backdrop-blur-sm border border-transparent hover:border-white/20"
                       >
                         {section.title}
-                        <ChevronDown className="ml-2 h-4 w-4" />
+                        <ChevronDown className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:rotate-180" />
                       </Button>
                     </DropdownMenuTrigger>
                   </motion.div>
-                  <DropdownMenuContent className="mt-2 min-w-[210px] rounded-xl border border-conference-500/50 bg-conference-800/95 p-2 shadow-2xl backdrop-blur-sm z-[60]">
-                    {section.items.map((item) => (
-                      <DropdownMenuItem
-                        key={item.label}
-                        className="cursor-pointer rounded-lg px-5 py-3 text-sm font-medium text-[#cbd5ff] transition-all duration-300 hover:translate-x-1 hover:bg-gradient-to-r hover:from-cyan-500/20 hover:via-purple-600/20 hover:to-pink-500/20 hover:text-[#b7a6e9]"
-                        asChild
-                      >
-                        <a href={item.href}>{item.label}</a>
-                      </DropdownMenuItem>
-                    ))}
+                  <DropdownMenuContent className="mt-2 min-w-[220px] rounded-2xl border border-slate-700/50 bg-slate-800/95 backdrop-blur-xl p-2 shadow-2xl z-[60]">
+                    <AnimatePresence>
+                      {section.items.map((item, idx) => (
+                        <motion.div
+                          key={item.label}
+                          variants={menuItemVariants}
+                          initial="hidden"
+                          animate="visible"
+                          transition={{ delay: idx * 0.05 }}
+                        >
+                          <DropdownMenuItem
+                            className="cursor-pointer rounded-xl px-4 py-3 text-sm font-medium text-slate-200 transition-all duration-300 hover:bg-gradient-to-r hover:from-blue-500/20 hover:to-indigo-500/20 hover:text-white hover:shadow-md"
+                            asChild
+                          >
+                            <a
+                              href={item.href}
+                              onClick={(e) => {
+                                e.preventDefault()
+                                smoothScroll(item.href)
+                              }}
+                              className="flex items-center gap-3"
+                            >
+                              <div className="w-2 h-2 bg-blue-400 rounded-full opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+                              {item.label}
+                            </a>
+                          </DropdownMenuItem>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </motion.div>
@@ -174,31 +216,58 @@ const Header: React.FC = () => {
 
           {/* Search & mobile menu ---------------------------------------- */}
           <div className="flex items-center gap-4 flex-shrink-0 z-10">
-            {/* Search box */}
-            <div className="relative flex items-center">
-  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-conference-300 pointer-events-none">
-    <Search className="w-4 h-4" strokeWidth={2} />
-  </span>
-  <Input
-    type="text"
-    placeholder="Search…"
-    className="w-64 pl-9 rounded-full border border-conference-500/50 bg-conference-800/80 py-2 text-sm text-conference-100 transition-all duration-300 placeholder:text-conference-300 hover:border-conference-300 focus:border-conference-300 focus:outline-none focus:ring-2 focus:ring-conference-300/30"
-  />
-</div>
+            {/* Search box - Hidden on mobile */}
+            <motion.div
+              className="hidden md:block relative"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.4 }}
+            >
+              <div className="relative flex items-center">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                  <Search className="w-4 h-4" strokeWidth={2} />
+                </span>
+                <Input
+                  type="text"
+                  placeholder="Search conference..."
+                  className="w-64 pl-10 pr-4 py-2 rounded-full border border-slate-600/50 bg-slate-800/80 backdrop-blur-md text-sm text-slate-200 transition-all duration-300 placeholder:text-slate-400 hover:border-blue-400/50 focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/30 focus:bg-slate-700/80"
+                />
+              </div>
+            </motion.div>
+
+            {/* CTA Button - Hidden on mobile */}
+            <motion.div
+              className="hidden lg:block"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <Button
+                onClick={() => smoothScroll("#registration")}
+                className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                Register Now
+              </Button>
+            </motion.div>
 
             {/* Mobile trigger */}
             <Sheet open={mobileDrawerOpen} onOpenChange={setMobileDrawerOpen}>
               <SheetTrigger asChild className="lg:hidden">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  aria-label="Open mobile menu"
-                  className="rounded-full bg-conference-300 p-2 text-conference-800 shadow-md transition-all duration-300 hover:scale-110 hover:bg-conference-200 hover:shadow-lg"
-                >
-                  <MenuIcon className="h-6 w-6" />
-                </Button>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    aria-label="Open mobile menu"
+                    className="rounded-full bg-white/10 backdrop-blur-md p-2 text-white shadow-lg transition-all duration-300 hover:bg-white/20 hover:shadow-xl border border-white/20"
+                  >
+                    <MenuIcon className="h-6 w-6" />
+                  </Button>
+                </motion.div>
               </SheetTrigger>
-              <SheetContent side="right" className="w-72 border-l-4 border-conference-500 bg-conference-900 p-0">
+              <SheetContent
+                side="right"
+                className="w-80 border-l border-slate-700/50 bg-slate-900/95 backdrop-blur-xl p-0 shadow-2xl"
+              >
                 <motion.div
                   initial={{ x: 300, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
@@ -206,35 +275,61 @@ const Header: React.FC = () => {
                   transition={{ type: "spring", damping: 28, stiffness: 320 }}
                   className="flex h-full flex-col"
                 >
-                  <div className="flex justify-end p-4">
+                  {/* Mobile Header */}
+                  <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl">
+                        <Zap className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="text-lg font-bold text-white">COMSATS Conf</span>
+                        <span className="text-blue-300 text-sm block">2026</span>
+                      </div>
+                    </div>
                     <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
                       <Button
                         variant="ghost"
                         size="icon"
                         aria-label="Close mobile menu"
-                        className="text-conference-200"
+                        className="text-slate-300 hover:text-white hover:bg-white/10 rounded-full"
                         onClick={() => setMobileDrawerOpen(false)}
                       >
                         <XIcon className="h-6 w-6" />
                       </Button>
                     </motion.div>
                   </div>
-                  <nav className="flex-1 overflow-y-auto">
-                    <ul className="m-0 list-none p-0">
+
+                  {/* Mobile Search */}
+                  <div className="p-6 border-b border-slate-700/50">
+                    <div className="relative">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                      <Input
+                        type="text"
+                        placeholder="Search..."
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-slate-600/50 bg-slate-800/80 text-slate-200 placeholder:text-slate-400 focus:border-blue-400 focus:ring-2 focus:ring-blue-400/30"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Mobile Navigation */}
+                  <nav className="flex-1 overflow-y-auto p-4">
+                    <ul className="space-y-2">
                       {navigationSections.map((section, i) => (
                         <motion.li
                           key={section.title}
-                          initial={{ opacity: 0, x: 35 }}
+                          initial={{ opacity: 0, x: 30 }}
                           animate={{ opacity: 1, x: 0 }}
-                          transition={{ delay: i * 0.12, duration: 0.35 }}
-                          className="mb-2"
+                          transition={{ delay: i * 0.1, duration: 0.3 }}
                         >
                           <Button
                             variant="ghost"
-                            className="flex w-full items-center justify-between rounded-lg bg-conference-600/30 px-4 py-3 text-base font-semibold uppercase tracking-wide text-conference-200 transition-all duration-300 hover:bg-conference-600/50 hover:scale-[1.01] hover:text-conference-400"
+                            className="w-full justify-between rounded-xl bg-slate-800/50 backdrop-blur-sm px-4 py-4 text-left font-semibold text-slate-200 transition-all duration-300 hover:bg-slate-700/50 hover:text-white border border-slate-700/30 hover:border-slate-600/50"
                             onClick={() => toggleSection(section.title, setMobileExpanded)}
                           >
-                            {section.title}
+                            <span className="flex items-center gap-3">
+                              <div className="w-2 h-2 bg-blue-400 rounded-full" />
+                              {section.title}
+                            </span>
                             <motion.div
                               animate={{ rotate: mobileExpanded[section.title] ? 180 : 0 }}
                               transition={{ duration: 0.25 }}
@@ -242,45 +337,70 @@ const Header: React.FC = () => {
                               <ChevronDown className="h-5 w-5" />
                             </motion.div>
                           </Button>
-                          {/* subitems */}
-                          <div
-                            className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                              mobileExpanded[section.title] ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
-                            }`}
-                          >
-                            <ul className="m-0 list-none pl-8 pt-2">
-                              {section.items.map((item, j) => (
-                                <motion.li
-                                  key={item.label}
-                                  initial={{ opacity: 0, x: 25 }}
-                                  animate={{ opacity: 1, x: 0 }}
-                                  transition={{ delay: j * 0.06, duration: 0.25 }}
-                                  className="mb-1"
-                                >
-                                  <Button
-                                    asChild
-                                    variant="ghost"
-                                    className="w-full justify-start rounded-lg px-4 py-2 text-conference-200 transition-all duration-300 hover:translate-x-1 hover:bg-conference-600/20 hover:text-conference-400"
-                                    onClick={() => setMobileDrawerOpen(false)}
-                                  >
-                                    <a href={item.href}>{item.label}</a>
-                                  </Button>
-                                </motion.li>
-                              ))}
-                            </ul>
-                          </div>
+
+                          <AnimatePresence>
+                            {mobileExpanded[section.title] && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3 }}
+                                className="overflow-hidden"
+                              >
+                                <ul className="mt-2 space-y-1 pl-6">
+                                  {section.items.map((item, j) => (
+                                    <motion.li
+                                      key={item.label}
+                                      initial={{ opacity: 0, x: 20 }}
+                                      animate={{ opacity: 1, x: 0 }}
+                                      transition={{ delay: j * 0.05, duration: 0.2 }}
+                                    >
+                                      <Button
+                                        asChild
+                                        variant="ghost"
+                                        className="w-full justify-start rounded-lg px-4 py-3 text-slate-300 transition-all duration-300 hover:bg-slate-700/30 hover:text-white hover:translate-x-1"
+                                        onClick={() => {
+                                          setMobileDrawerOpen(false)
+                                          setTimeout(() => smoothScroll(item.href), 100)
+                                        }}
+                                      >
+                                        <a href={item.href} className="flex items-center gap-3">
+                                          <div className="w-1 h-1 bg-slate-400 rounded-full" />
+                                          {item.label}
+                                        </a>
+                                      </Button>
+                                    </motion.li>
+                                  ))}
+                                </ul>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
                         </motion.li>
                       ))}
                     </ul>
                   </nav>
+
+                  {/* Mobile CTA */}
+                  <div className="p-6 border-t border-slate-700/50">
+                    <Button
+                      onClick={() => {
+                        setMobileDrawerOpen(false)
+                        setTimeout(() => smoothScroll("#registration"), 100)
+                      }}
+                      className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Register for Conference
+                    </Button>
+                  </div>
                 </motion.div>
               </SheetContent>
             </Sheet>
           </div>
         </div>
-      </header>
+      </animated.header>
+
       {/* Spacer to offset fixed header */}
-      <div className="min-h-[72px]" />
+      <div className="h-20" />
     </>
   )
 }

@@ -1,353 +1,646 @@
 "use client"
-
 import type React from "react"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import type { Variants } from "framer-motion"
-import { ChevronLeft, ChevronRight, Award, Users, Mic, Quote } from "lucide-react"
-
-// ---------------------------------------------------
-// Types & Data
-// ---------------------------------------------------
-
-type Speaker = {
-  name: string
-  role: string
-  affiliation: string
-  image: string
-  type: "Keynote" | "Invited"
-  topic: string
-  bio: string
-}
-
-const speakers: Speaker[] = [
-  {
-    name: "Dr. Amelia Rodriguez",
-    role: "Professor of Computer Science",
-    affiliation: "MIT",
-    image: "/placeholder.svg?height=400&width=400&text=Dr.+Amelia+Rodriguez",
-    type: "Keynote",
-    topic: "AI for Social Good",
-    bio: "Leading researcher in ethical AI and machine learning applications for social impact.",
-  },
-  {
-    name: "James Patel",
-    role: "Chief Technology Officer",
-    affiliation: "TechNova Inc.",
-    image: "/placeholder.svg?height=400&width=400&text=James+Patel",
-    type: "Keynote",
-    topic: "Scaling Sustainable Cloud Infrastructure",
-    bio: "Pioneering sustainable cloud computing solutions and green technology initiatives.",
-  },
-  {
-    name: "Prof. Elena Petrova",
-    role: "Head of HCI Lab",
-    affiliation: "University of Helsinki",
-    image: "/placeholder.svg?height=400&width=400&text=Prof.+Elena+Petrova",
-    type: "Invited",
-    topic: "The Future of Human-Centered AI",
-    bio: "Expert in human-computer interaction and user experience design for AI systems.",
-  },
-  {
-    name: "Dr. Kai Nakamura",
-    role: "Senior Research Scientist",
-    affiliation: "QuantumLeap Labs",
-    image: "/placeholder.svg?height=400&width=400&text=Dr.+Kai+Nakamura",
-    type: "Invited",
-    topic: "Quantum Computing Meets Machine Learning",
-    bio: "Breakthrough researcher in quantum computing applications and quantum machine learning.",
-  },
-]
-
-// ---------------------------------------------------
-// Animation Variants
-// ---------------------------------------------------
+import { Linkedin, Twitter, Globe, Users, Star, ChevronLeft, ChevronRight, Play } from "lucide-react"
+import { Button } from "@/Components/ui/button"
 
 const container: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
-    transition: {
-      staggerChildren: 0.2,
-      delayChildren: 0.3,
-    },
+    transition: { staggerChildren: 0.1, duration: 0.8, ease: "easeOut" },
   },
 }
 
 const item: Variants = {
-  hidden: { y: 30, opacity: 0 },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
+}
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.9, y: 20 },
   visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 100,
-      damping: 12,
-      duration: 0.6,
-    },
-  },
-}
-
-const iconFloat = {
-  animate: {
-    y: [-5, 5, -5],
-    rotate: [0, 5, -5, 0],
-    transition: {
-      duration: 4,
-      repeat: Number.POSITIVE_INFINITY,
-      ease: [0.42, 0, 0.58, 1] as [number, number, number, number],
-    },
-  },
-}
-
-const slideVariants: Variants = {
-  enter: (direction: number) => ({
-    x: direction > 0 ? 300 : -300,
-    opacity: 0,
-    scale: 0.8,
-  }),
-  center: {
-    zIndex: 1,
-    x: 0,
     opacity: 1,
     scale: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
   },
-  exit: (direction: number) => ({
-    zIndex: 0,
-    x: direction < 0 ? 300 : -300,
-    opacity: 0,
-    scale: 0.8,
-  }),
 }
 
-// ---------------------------------------------------
-// Component
-// ---------------------------------------------------
+interface Speaker {
+  id: string
+  name: string
+  title: string
+  company: string
+  image: string
+  bio: string
+  expertise: string[]
+  social: {
+    linkedin?: string
+    twitter?: string
+    website?: string
+  }
+  featured: boolean
+  talkTitle: string
+  talkDescription: string
+}
+
+const speakers: Speaker[] = [
+  // Keynote Speakers
+  {
+    id: "1",
+    name: "Dr. Sarah Chen",
+    title: "Chief AI Officer",
+    company: "TechVision Corp",
+    image: "/placeholder.svg?height=400&width=400&text=Dr.+Sarah+Chen",
+    bio: "Leading AI researcher with 15+ years of experience in machine learning and neural networks. Pioneer in explainable AI and ethical technology development.",
+    expertise: ["Artificial Intelligence", "Machine Learning", "Ethics in Tech"],
+    social: {
+      linkedin: "#",
+      twitter: "#",
+      website: "#",
+    },
+    featured: true,
+    talkTitle: "The Future of Explainable AI",
+    talkDescription: "Exploring how we can make AI systems more transparent and trustworthy for widespread adoption.",
+  },
+  {
+    id: "2",
+    name: "Prof. Michael Rodriguez",
+    title: "Director of Innovation",
+    company: "Stanford University",
+    image: "/placeholder.svg?height=400&width=400&text=Prof.+Michael+Rodriguez",
+    bio: "Renowned computer scientist and educator, specializing in human-computer interaction and user experience design. Author of 3 bestselling books on technology.",
+    expertise: ["Human-Computer Interaction", "UX Design", "Technology Education"],
+    social: {
+      linkedin: "#",
+      twitter: "#",
+    },
+    featured: true,
+    talkTitle: "Designing for Human Connection",
+    talkDescription: "How technology can enhance rather than replace human relationships and interactions.",
+  },
+  // Invited Speakers
+  {
+    id: "3",
+    name: "Dr. James Park",
+    title: "Research Scientist",
+    company: "Quantum Dynamics Lab",
+    image: "/placeholder.svg?height=400&width=400&text=Dr.+James+Park",
+    bio: "Quantum computing researcher pushing the boundaries of computational possibilities. Published over 50 papers in leading scientific journals.",
+    expertise: ["Quantum Computing", "Cryptography", "Research"],
+    social: {
+      linkedin: "#",
+      twitter: "#",
+      website: "#",
+    },
+    featured: false,
+    talkTitle: "Quantum Computing: Present and Future",
+    talkDescription: "Understanding the current state and future potential of quantum computing technology.",
+  },
+  {
+    id: "4",
+    name: "Maria Gonzalez",
+    title: "Cybersecurity Director",
+    company: "SecureNet Solutions",
+    image: "/placeholder.svg?height=400&width=400&text=Maria+Gonzalez",
+    bio: "Cybersecurity expert with extensive experience in protecting enterprise systems. Recognized leader in security strategy and risk management.",
+    expertise: ["Cybersecurity", "Risk Management", "Enterprise Security"],
+    social: {
+      linkedin: "#",
+      twitter: "#",
+    },
+    featured: false,
+    talkTitle: "Zero Trust Security Architecture",
+    talkDescription: "Implementing comprehensive security strategies for modern distributed systems.",
+  },
+  {
+    id: "5",
+    name: "Alex Kumar",
+    title: "Blockchain Architect",
+    company: "DecentralTech",
+    image: "/placeholder.svg?height=400&width=400&text=Alex+Kumar",
+    bio: "Blockchain technology pioneer and cryptocurrency expert. Built multiple successful DeFi platforms and advised numerous blockchain startups.",
+    expertise: ["Blockchain", "Cryptocurrency", "DeFi"],
+    social: {
+      linkedin: "#",
+      website: "#",
+    },
+    featured: false,
+    talkTitle: "The Evolution of Decentralized Finance",
+    talkDescription: "How blockchain technology is revolutionizing traditional financial systems.",
+  },
+  {
+    id: "6",
+    name: "Lisa Thompson",
+    title: "VP of Engineering",
+    company: "CloudScale Systems",
+    image: "/placeholder.svg?height=400&width=400&text=Lisa+Thompson",
+    bio: "Expert in cloud architecture and scalable systems. Led engineering teams at major tech companies and successfully scaled platforms to millions of users.",
+    expertise: ["Cloud Computing", "System Architecture", "Team Leadership"],
+    social: {
+      linkedin: "#",
+      website: "#",
+    },
+    featured: false,
+    talkTitle: "Building Resilient Cloud Infrastructure",
+    talkDescription: "Best practices for creating scalable and reliable cloud-based systems.",
+  },
+  // Session Chair
+  {
+    id: "7",
+    name: "Dr. Robert Johnson",
+    title: "Conference Chair",
+    company: "MIT Computer Science",
+    image: "/placeholder.svg?height=400&width=400&text=Dr.+Robert+Johnson",
+    bio: "Distinguished professor and researcher in computer science with over 20 years of experience. Specializes in distributed systems and has chaired multiple international conferences.",
+    expertise: ["Distributed Systems", "Conference Management", "Academic Leadership"],
+    social: {
+      linkedin: "#",
+      twitter: "#",
+    },
+    featured: false,
+    talkTitle: "Welcome and Conference Overview",
+    talkDescription: "Opening remarks and overview of the conference themes and schedule.",
+  },
+  {
+    id: "8",
+    name: "Prof. Emily Wilson",
+    title: "Session Moderator",
+    company: "Harvard University",
+    image: "/placeholder.svg?height=400&width=400&text=Prof.+Emily+Wilson",
+    bio: "Leading researcher in human-computer interaction with extensive experience in academic conference organization. Published over 40 papers in top-tier conferences.",
+    expertise: ["Human-Computer Interaction", "User Experience", "Conference Organization"],
+    social: {
+      linkedin: "#",
+      website: "#",
+    },
+    featured: false,
+    talkTitle: "Panel Discussion: Future of Tech Education",
+    talkDescription: "Moderating a panel of experts discussing innovations in technology education.",
+  },
+]
 
 export const Speakers: React.FC = () => {
+  const [selectedSpeaker, setSelectedSpeaker] = useState<Speaker | null>(null)
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [direction, setDirection] = useState(0)
 
-  const paginate = (newDirection: number) => {
-    setDirection(newDirection)
-    setCurrentIndex((prevIndex) => {
-      if (newDirection === 1) {
-        return prevIndex === speakers.length - 1 ? 0 : prevIndex + 1
-      } else {
-        return prevIndex === 0 ? speakers.length - 1 : prevIndex - 1
-      }
-    })
+  const keynoteSpeakers = speakers.filter((speaker) => speaker.featured)
+  const invitedSpeakers = speakers.filter((speaker) => !speaker.featured && speaker.id !== "7" && speaker.id !== "8")
+  const sessionChairs = speakers.filter((speaker) => !speaker.featured && (speaker.id === "7" || speaker.id === "8"))
+
+  const nextSlide = () => {
+    setCurrentIndex((prev) => (prev + 1) % Math.ceil(invitedSpeakers.length / 3))
   }
 
-  // Auto-advance slideshow
-  useEffect(() => {
-    const timer = setInterval(() => {
-      paginate(1)
-    }, 5000)
-    return () => clearInterval(timer)
-  }, [])
+  const prevSlide = () => {
+    setCurrentIndex(
+      (prev) => (prev - 1 + Math.ceil(invitedSpeakers.length / 3)) % Math.ceil(invitedSpeakers.length / 3),
+    )
+  }
 
-  const keynoteCount = speakers.filter((s) => s.type === "Keynote").length
-  const invitedCount = speakers.filter((s) => s.type === "Invited").length
+  const visibleSpeakers = invitedSpeakers.slice(currentIndex * 3, (currentIndex + 1) * 3)
 
   return (
-    <section className="relative min-h-screen py-20 px-8 overflow-hidden bg-gradient-to-br from-[#9d8fb8]/45 via-[#b8a9d9]/40 to-[#e0d4f7]/35 backdrop-blur-md">
-      {/* Animated Background Elements */}
+    <section
+      id="speakers"
+      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+    >
+      {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-32 left-32 w-72 h-72 bg-gradient-to-r from-white/8 to-indigo-300/15 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-32 right-32 w-96 h-96 bg-gradient-to-r from-purple-300/15 to-white/8 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/3 left-1/3 w-80 h-80 bg-gradient-to-r from-pink-300/10 to-purple-300/10 rounded-full blur-3xl animate-pulse delay-500" />
+        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
       </div>
 
       <motion.div
-        className="relative z-10 max-w-7xl mx-auto"
         variants={container}
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true }}
+        className="relative z-10 max-w-7xl mx-auto space-y-16"
       >
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left Side - Content */}
-          <motion.div variants={item} className="space-y-8">
-            {/* Header Badge */}
-            <motion.div
-              className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-white shadow-xl"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            >
-              <motion.div
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 8, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-              >
-                <Mic className="w-6 h-6 text-cyan-300" />
-              </motion.div>
-              <span className="text-lg font-semibold">Invited Speakers</span>
-            </motion.div>
-
-            {/* Main Heading */}
-            <motion.h2
-              className="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight drop-shadow-lg"
-              animate={{
-                backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
-              }}
-              transition={{ duration: 5, repeat: Number.POSITIVE_INFINITY }}
-            >
-              Meet Our{" "}
-              <span className="bg-gradient-to-r from-cyan-300 via-pink-300 to-yellow-300 bg-clip-text text-transparent bg-[length:200%_200%]">
-                Visionary
-              </span>{" "}
+        {/* Heading */}
+        <motion.div variants={item} className="text-center space-y-6">
+          <motion.h2
+            className="text-5xl md:text-6xl lg:text-7xl font-black leading-tight text-slate-800"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            Featured{" "}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
               Speakers
-            </motion.h2>
+            </span>
+          </motion.h2>
+          <motion.p variants={item} className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed font-medium">
+            Learn from industry leaders, renowned researchers, and visionary innovators who are shaping the future of
+            technology.
+          </motion.p>
+        </motion.div>
 
-            {/* Description */}
-            <motion.p className="text-xl italic text-white/90 leading-relaxed drop-shadow-sm" variants={item}>
-              Join us for inspiring talks from world-renowned experts who are shaping the future of technology,
-              innovation, and digital transformation across industries.
-            </motion.p>
-
-            {/* Stats Cards */}
-            <motion.div className="grid grid-cols-2 gap-4" variants={item}>
+        {/* Keynote Speakers */}
+        <motion.div variants={item} className="space-y-8">
+          <h3 className="text-3xl font-bold text-slate-800 text-center">Keynote Speakers</h3>
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {keynoteSpeakers.map((speaker, index) => (
               <motion.div
-                className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 text-center"
-                whileHover={{ scale: 1.05, y: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
+                key={speaker.id}
+                variants={cardVariants}
+                className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden cursor-pointer"
+                whileHover={{ scale: 1.02, y: -5 }}
+                onClick={() => setSelectedSpeaker(speaker)}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
               >
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Award className="w-6 h-6 text-yellow-300" />
-                  <span className="text-3xl font-bold text-white">{keynoteCount}</span>
-                </div>
-                <p className="text-white/70 font-medium">Keynote Speakers</p>
-              </motion.div>
-
-              <motion.div
-                className="bg-white/10 backdrop-blur-md rounded-xl p-6 border border-white/20 text-center"
-                whileHover={{ scale: 1.05, y: -5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <div className="flex items-center justify-center gap-2 mb-2">
-                  <Users className="w-6 h-6 text-cyan-300" />
-                  <span className="text-3xl font-bold text-white">{invitedCount}</span>
-                </div>
-                <p className="text-white/70 font-medium">Invited Speakers</p>
-              </motion.div>
-            </motion.div>
-
-            {/* Quote Section */}
-            <motion.div
-              className="group relative overflow-hidden bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 hover:border-white/40 transition-all duration-500 hover:bg-white/20 shadow-xl hover:shadow-2xl"
-              whileHover={{ y: -5, scale: 1.02 }}
-              transition={{ type: "spring", stiffness: 300 }}
-              variants={item}
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-out" />
-              <motion.div variants={iconFloat} animate="animate" className="mb-4">
-                <Quote className="w-8 h-8 text-cyan-300" />
-              </motion.div>
-              <p className="text-white/90 italic text-lg leading-relaxed">
-                “Innovation <span className="text-cyan-300 font-semibold">distinguishes between</span> a leader and a follower. Our speakers embody this spirit of innovation and will inspire you to push the boundaries of what's possible.”
-              </p>
-            </motion.div>
-          </motion.div>
-
-          {/* Right Side - Speaker Slideshow */}
-          <motion.div variants={item} className="relative mt-12 lg:mt-12">
-            <div className="relative h-[600px] overflow-hidden rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-2xl">
-              <AnimatePresence initial={false} custom={direction}>
-                <motion.div
-                  key={currentIndex}
-                  custom={direction}
-                  variants={slideVariants}
-                  initial="enter"
-                  animate="center"
-                  exit="exit"
-                  transition={{
-                    x: { type: "spring", stiffness: 300, damping: 30 },
-                    opacity: { duration: 0.2 },
-                    scale: { duration: 0.2 },
-                  }}
-                  className="absolute inset-0 p-8 flex flex-col justify-center items-center text-center"
-                >
-                  {/* Speaker Image */}
-                  <motion.div
-                    className="relative mb-6"
-                    whileHover={{ scale: 1.05 }}
-                    transition={{ type: "spring", stiffness: 300 }}
-                  >
-                    <div className="w-48 h-64 rounded-2xl overflow-hidden shadow-2xl border-4 border-white/30">
-                      <img
-                        src={speakers[currentIndex].image || "/placeholder.svg"}
-                        alt={speakers[currentIndex].name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-
-                    {/* Type Badge */}
-                    <div
-                      className={`absolute -top-3 -right-3 px-3 py-1 rounded-full text-xs font-bold text-white shadow-lg ${
-                        speakers[currentIndex].type === "Keynote"
-                          ? "bg-gradient-to-r from-yellow-400 to-orange-500"
-                          : "bg-gradient-to-r from-cyan-400 to-blue-500"
-                      }`}
-                    >
-                      {speakers[currentIndex].type}
-                    </div>
-                  </motion.div>
-
-                  {/* Speaker Info */}
-                  <motion.div
-                    className="space-y-4"
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                  >
-                    <h3 className="text-2xl font-bold text-white">{speakers[currentIndex].name}</h3>
-
-                    <p className="text-white/80 font-medium">{speakers[currentIndex].role}</p>
-
-                    <p className="text-cyan-300 font-semibold">{speakers[currentIndex].affiliation}</p>
-
-                    <div className="bg-white/10 rounded-lg p-4 backdrop-blur-sm">
-                      <p className="text-yellow-300 font-semibold mb-2 italic">"{speakers[currentIndex].topic}"</p>
-                      <p className="text-white/70 text-sm italic leading-relaxed">{speakers[currentIndex].bio}</p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              </AnimatePresence>
-
-              {/* Navigation Buttons */}
-              <button
-                className="absolute left-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 hover:scale-110"
-                onClick={() => paginate(-1)}
-              >
-                <ChevronLeft className="w-6 h-6" />
-              </button>
-
-              <button
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 w-12 h-12 rounded-full bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center text-white hover:bg-white/30 transition-all duration-300 hover:scale-110"
-                onClick={() => paginate(1)}
-              >
-                <ChevronRight className="w-6 h-6" />
-              </button>
-
-              {/* Dots Indicator */}
-              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
-                {speakers.map((_, index) => (
-                  <button
-                    key={index}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentIndex ? "bg-white scale-125" : "bg-white/40 hover:bg-white/60"
-                    }`}
-                    onClick={() => {
-                      setDirection(index > currentIndex ? 1 : -1)
-                      setCurrentIndex(index)
-                    }}
+                <div className="relative">
+                  <img
+                    src={speaker.image || "/placeholder.svg"}
+                    alt={speaker.name}
+                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                ))}
-              </div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-4 right-4">
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                      <Star className="h-3 w-3" />
+                      Keynote
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button
+                      size="sm"
+                      className="bg-white/20 backdrop-blur-md text-white border border-white/30 hover:bg-white/30"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      View Profile
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="p-8">
+                  <h4 className="text-2xl font-bold text-slate-800 mb-2">{speaker.name}</h4>
+                  <p className="text-lg font-semibold text-blue-600 mb-1">{speaker.title}</p>
+                  <p className="text-slate-600 font-medium mb-4">{speaker.company}</p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="font-bold text-slate-800 mb-2">Talk: {speaker.talkTitle}</h5>
+                      <p className="text-slate-600 text-sm leading-relaxed">{speaker.talkDescription}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {speaker.expertise.slice(0, 3).map((skill) => (
+                        <span
+                          key={skill}
+                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      {speaker.social.linkedin && (
+                        <motion.a
+                          href={speaker.social.linkedin}
+                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                        </motion.a>
+                      )}
+                      {speaker.social.twitter && (
+                        <motion.a
+                          href={speaker.social.twitter}
+                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Twitter className="h-5 w-5 text-blue-600" />
+                        </motion.a>
+                      )}
+                      {speaker.social.website && (
+                        <motion.a
+                          href={speaker.social.website}
+                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Globe className="h-5 w-5 text-blue-600" />
+                        </motion.a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Invited Speakers Carousel */}
+        <motion.div variants={item} className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h3 className="text-3xl font-bold text-slate-800">Invited Speakers</h3>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={prevSlide}
+                className="p-2 rounded-full border-slate-300 hover:bg-slate-100 bg-transparent"
+              >
+                <ChevronLeft className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={nextSlide}
+                className="p-2 rounded-full border-slate-300 hover:bg-slate-100 bg-transparent"
+              >
+                <ChevronRight className="h-5 w-5" />
+              </Button>
             </div>
-          </motion.div>
-        </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <AnimatePresence mode="wait">
+              {visibleSpeakers.map((speaker: Speaker, index: number) => (
+                <motion.div
+                  key={`${currentIndex}-${speaker.id}`}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="group bg-white/90 backdrop-blur-xl rounded-2xl shadow-xl border border-white/50 overflow-hidden cursor-pointer"
+                  whileHover={{ scale: 1.02, y: -3 }}
+                  onClick={() => setSelectedSpeaker(speaker)}
+                >
+                  <div className="relative">
+                    <img
+                      src={speaker.image || "/placeholder.svg"}
+                      alt={speaker.name}
+                      className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  </div>
+
+                  <div className="p-6">
+                    <h4 className="text-xl font-bold text-slate-800 mb-1">{speaker.name}</h4>
+                    <p className="text-blue-600 font-semibold mb-1">{speaker.title}</p>
+                    <p className="text-slate-600 text-sm mb-3">{speaker.company}</p>
+
+                    <div className="flex flex-wrap gap-1 mb-4">
+                      {speaker.expertise.slice(0, 2).map((skill: string) => (
+                        <span
+                          key={skill}
+                          className="bg-slate-100 text-slate-700 px-2 py-1 rounded-full text-xs font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-2">
+                      {speaker.social.linkedin && (
+                        <div className="p-1.5 bg-slate-100 rounded-md">
+                          <Linkedin className="h-4 w-4 text-blue-600" />
+                        </div>
+                      )}
+                      {speaker.social.twitter && (
+                        <div className="p-1.5 bg-slate-100 rounded-md">
+                          <Twitter className="h-4 w-4 text-blue-600" />
+                        </div>
+                      )}
+                      {speaker.social.website && (
+                        <div className="p-1.5 bg-slate-100 rounded-md">
+                          <Globe className="h-4 w-4 text-blue-600" />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        </motion.div>
+
+        {/* Session Chairs Section */}
+        <motion.div variants={item} className="space-y-8 pt-12">
+          <h3 className="text-3xl font-bold text-slate-800 text-center">Session Chairs</h3>
+          <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+            {sessionChairs.map((speaker: Speaker, index: number) => (
+              <motion.div
+                key={speaker.id}
+                variants={cardVariants}
+                className="group bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden cursor-pointer"
+                whileHover={{ scale: 1.02, y: -5 }}
+                onClick={() => setSelectedSpeaker(speaker)}
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.2 }}
+              >
+                <div className="relative">
+                  <img
+                    src={speaker.image || "/placeholder.svg"}
+                    alt={speaker.name}
+                    className="w-full h-80 object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <div className="absolute top-4 right-4">
+                    <div className="bg-gradient-to-r from-green-400 to-teal-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                      <Star className="h-3 w-3" />
+                      Session Chair
+                    </div>
+                  </div>
+                  <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button
+                      size="sm"
+                      className="bg-white/20 backdrop-blur-md text-white border border-white/30 hover:bg-white/30"
+                    >
+                      <Play className="h-4 w-4 mr-2" />
+                      View Profile
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="p-8">
+                  <h4 className="text-2xl font-bold text-slate-800 mb-2">{speaker.name}</h4>
+                  <p className="text-lg font-semibold text-blue-600 mb-1">{speaker.title}</p>
+                  <p className="text-slate-600 font-medium mb-4">{speaker.company}</p>
+
+                  <div className="space-y-4">
+                    <div>
+                      <h5 className="font-bold text-slate-800 mb-2">Talk: {speaker.talkTitle}</h5>
+                      <p className="text-slate-600 text-sm leading-relaxed">{speaker.talkDescription}</p>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2">
+                      {speaker.expertise.slice(0, 3).map((skill: string) => (
+                        <span
+                          key={skill}
+                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex gap-3 pt-2">
+                      {speaker.social.linkedin && (
+                        <motion.a
+                          href={speaker.social.linkedin}
+                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Linkedin className="h-5 w-5 text-blue-600" />
+                        </motion.a>
+                      )}
+                      {speaker.social.twitter && (
+                        <motion.a
+                          href={speaker.social.twitter}
+                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Twitter className="h-5 w-5 text-blue-600" />
+                        </motion.a>
+                      )}
+                      {speaker.social.website && (
+                        <motion.a
+                          href={speaker.social.website}
+                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
+                          whileHover={{ scale: 1.1 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <Globe className="h-5 w-5 text-blue-600" />
+                        </motion.a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* CTA Section */}
+        <motion.div variants={item} className="text-center pt-12">
+          <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-3xl p-12 text-white">
+            <h3 className="text-3xl font-bold mb-4">Want to Speak at Our Conference?</h3>
+            <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
+              We're always looking for innovative speakers to share their expertise. Submit your proposal and join our
+              community of thought leaders.
+            </p>
+            <Button
+              size="lg"
+              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+            >
+              <Users className="w-5 h-5 mr-2" />
+              Submit Speaking Proposal
+            </Button>
+          </div>
+        </motion.div>
       </motion.div>
+
+      {/* Speaker Detail Modal */}
+      <AnimatePresence>
+        {selectedSpeaker && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setSelectedSpeaker(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="relative">
+                <img
+                  src={selectedSpeaker.image || "/placeholder.svg"}
+                  alt={selectedSpeaker.name}
+                  className="w-full h-64 object-cover rounded-t-3xl"
+                />
+                <button
+                  onClick={() => setSelectedSpeaker(null)}
+                  className="absolute top-4 right-4 bg-black/20 backdrop-blur-md text-white p-2 rounded-full hover:bg-black/40 transition-colors"
+                >
+                  ×
+                </button>
+              </div>
+
+              <div className="p-8">
+                <div className="flex items-start justify-between mb-6">
+                  <div>
+                    <h3 className="text-3xl font-bold text-slate-800 mb-2">{selectedSpeaker.name}</h3>
+                    <p className="text-xl font-semibold text-blue-600 mb-1">{selectedSpeaker.title}</p>
+                    <p className="text-slate-600 font-medium">{selectedSpeaker.company}</p>
+                  </div>
+                  {selectedSpeaker.featured && (
+                    <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1">
+                      <Star className="h-3 w-3" />
+                      Keynote
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-6">
+                  <div>
+                    <h4 className="font-bold text-slate-800 mb-2">Biography</h4>
+                    <p className="text-slate-600 leading-relaxed">{selectedSpeaker.bio}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-slate-800 mb-2">Talk: {selectedSpeaker.talkTitle}</h4>
+                    <p className="text-slate-600 leading-relaxed">{selectedSpeaker.talkDescription}</p>
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-slate-800 mb-3">Expertise</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSpeaker.expertise.map((skill) => (
+                        <span
+                          key={skill}
+                          className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 pt-4">
+                    {selectedSpeaker.social.linkedin && (
+                      <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
+                        <Linkedin className="h-4 w-4" />
+                        LinkedIn
+                      </Button>
+                    )}
+                    {selectedSpeaker.social.twitter && (
+                      <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
+                        <Twitter className="h-4 w-4" />
+                        Twitter
+                      </Button>
+                    )}
+                    {selectedSpeaker.social.website && (
+                      <Button variant="outline" size="sm" className="flex items-center gap-2 bg-transparent">
+                        <Globe className="h-4 w-4" />
+                        Website
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   )
 }

@@ -11,6 +11,7 @@ import ContactUs from './Components/ContactUs'
 import Footer from './Components/Footer'
 import Gallery from './Components/Gallery'
 import AccommodationTravel from './Components/AccommodationTravel'
+import  Sponsors  from './Components/Sponsors'
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
       <Registration />
       <AbstractGuidelines />
       <Organizers />
+      <Sponsors/>
       <Gallery />
       <AccommodationTravel />
       <ContactUs />

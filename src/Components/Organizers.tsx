@@ -1,200 +1,562 @@
 "use client"
 
 import type React from "react"
+import { useState } from "react"
 import { motion } from "framer-motion"
 import type { Variants } from "framer-motion"
-import { Users, Building2, Handshake, Award, Lightbulb, UserCheck, ArrowRight } from "lucide-react"
+import {
+  Users,
+  Building2,
+  Handshake,
+  Award,
+  Mail,
+  Linkedin,
+  Globe,
+  Crown,
+  Shield,
+  Zap,
+  Heart,
+  Target,
+  Sparkles,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react"
 import { Button } from "@/Components/ui/button"
 
 const container: Variants = {
   hidden: { opacity: 0 },
-  visible: { opacity: 1, transition: { staggerChildren: 0.15, duration: 0.6, ease: "easeOut" } },
+  visible: { opacity: 1, transition: { staggerChildren: 0.08, duration: 0.8, ease: "easeOut" } },
 }
 
 const item: Variants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  hidden: { opacity: 0, y: 30 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 }
 
-const iconFloat: Variants = {
-  animate: {
-    y: [-3, 3, -3],
-    transition: {
-      duration: 3,
-      repeat: Number.POSITIVE_INFINITY,
-      ease: "easeInOut",
-    },
+const cardVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.9, y: 20 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" },
   },
+}
+
+const slideVariants: Variants = {
+  enter: (direction: number) => ({
+    x: direction > 0 ? 300 : -300,
+    opacity: 0,
+    scale: 0.8,
+  }),
+  center: {
+    zIndex: 1,
+    x: 0,
+    opacity: 1,
+    scale: 1,
+  },
+  exit: (direction: number) => ({
+    zIndex: 0,
+    x: direction < 0 ? 300 : -300,
+    opacity: 0,
+    scale: 0.8,
+  }),
 }
 
 const committees = [
-  { role: "General Chair", names: ["Prof. Alice Johnson"], icon: <Award className="h-5 w-5 text-white" /> },
   {
-    role: "Program Chairs",
-    names: ["Dr. Bob Lee", "Dr. Carol Singh"],
-    icon: <Lightbulb className="h-5 w-5 text-white" />,
+    role: "Patron-in-Chief",
+    names: ["Prof. Dr. Sajid Qamar"],
+    icon: <Crown className="h-7 w-7 text-white" />,
+    color: "from-purple-600 via-purple-700 to-indigo-800",
+    accent: "from-purple-400 to-indigo-500",
+    bio: "Visionary leader providing strategic direction and unwavering support for the conference's mission to advance scientific excellence.",
+    achievements: ["20+ Years Leadership", "100+ Publications", "International Recognition"],
   },
-  { role: "Publication Chair", names: ["Dr. David Kim"], icon: <UserCheck className="h-5 w-5 text-white" /> },
   {
-    role: "Publicity Chairs",
-    names: ["Dr. Eva Brown", "Mr. Frank Wu"],
-    icon: <Users className="h-5 w-5 text-white" />,
+    role: "Patron",
+    names: ["Prof. Dr. Najeeb-ur-Rehman"],
+    icon: <Shield className="h-7 w-7 text-white" />,
+    color: "from-blue-600 via-blue-700 to-cyan-800",
+    accent: "from-blue-400 to-cyan-500",
+    bio: "Distinguished academic leader fostering innovation and collaboration in the scientific community.",
+    achievements: ["Research Excellence", "Academic Leadership", "Industry Partnerships"],
+  },
+  {
+    role: "Conference Patron",
+    names: ["Prof. Dr. M. Irshad"],
+    icon: <Award className="h-7 w-7 text-white" />,
+    color: "from-emerald-600 via-emerald-700 to-teal-800",
+    accent: "from-emerald-400 to-teal-500",
+    bio: "Dedicated patron ensuring the highest standards of academic excellence and professional development.",
+    achievements: ["Conference Excellence", "Mentorship", "Global Network"],
+  },
+  {
+    role: "Conference Chairperson",
+    names: ["Prof. Dr. Mahmood A. Kayani"],
+    icon: <Zap className="h-7 w-7 text-white" />,
+    color: "from-orange-600 via-orange-700 to-red-800",
+    accent: "from-orange-400 to-red-500",
+    bio: "Dynamic chairperson orchestrating all conference activities with precision and innovation.",
+    achievements: ["Event Management", "Strategic Planning", "Team Leadership"],
+  },
+  {
+    role: "President PSFST",
+    names: ["Prof. Dr. Muhammad Atif Randhawa"],
+    icon: <Heart className="h-7 w-7 text-white" />,
+    color: "from-pink-600 via-pink-700 to-rose-800",
+    accent: "from-pink-400 to-rose-500",
+    bio: "Esteemed president of Pakistan Society of Food Scientists and Technologists, driving industry advancement.",
+    achievements: ["Society Leadership", "Industry Impact", "Professional Development"],
   },
 ]
 
-const collaborators = ["IEEE XYZ Section", "ACM SIGCHI Chapter", "TechCorp Labs", "Global Research Institute"]
+const collaborators = [
+  {
+    name: "Higher Education Commission (HEC), Pakistan",
+    logo: "/placeholder.svg?height=60&width=120&text=HEC",
+    website: "https://www.hec.gov.pk/",
+    description: "Leading higher education development in Pakistan",
+  },
+  {
+    name: "Pakistan Society of Food Scientists and Technologists (PSFST)",
+    logo: "/placeholder.svg?height=60&width=120&text=PSFST",
+    website: "https://psfst.org/",
+    description: "Advancing food science and technology research",
+  },
+]
 
-export const Organizers: React.FC = () => (
-  <section
-    id="organizers"
-    className="relative min-h-screen py-16 px-8 overflow-hidden bg-gradient-to-br from-[#cfc3e6]/40 via-[#e0d4f7]/30 to-[#f7f3fc]/20 text-gray-800"
-  >
-    {/* Animated Background Elements */}
-    <div className="absolute inset-0 overflow-hidden">
-      <div className="absolute top-20 left-20 w-64 h-64 bg-gradient-to-r from-purple-200/30 to-blue-200/30 rounded-full blur-3xl animate-pulse" />
-      <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-pink-200/30 to-purple-200/30 rounded-full blur-3xl animate-pulse delay-1000" />
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-indigo-200/20 to-cyan-200/20 rounded-full blur-3xl animate-pulse delay-500" />
-    </div>
+const organizationStats = [
+  { icon: <Users className="h-10 w-10" />, value: "15+", label: "Committee Members", color: "text-blue-600" },
+  { icon: <Building2 className="h-10 w-10" />, value: "5+", label: "Partner Organizations", color: "text-emerald-600" },
+  { icon: <Award className="h-10 w-10" />, value: "10+", label: "Years Experience", color: "text-purple-600" },
+  { icon: <Target className="h-10 w-10" />, value: "500+", label: "Expected Participants", color: "text-orange-600" },
+]
 
-    <motion.div
-      variants={container}
-      initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true }}
-      className="relative z-10 max-w-7xl mx-auto space-y-12"
+export const Organizers: React.FC = () => {
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [direction, setDirection] = useState(0)
+  const [hoveredStat, setHoveredStat] = useState<number | null>(null)
+
+  const nextSlide = () => {
+    setDirection(1)
+    setCurrentSlide((prev) => (prev + 1) % committees.length)
+  }
+
+  const prevSlide = () => {
+    setDirection(-1)
+    setCurrentSlide((prev) => (prev - 1 + committees.length) % committees.length)
+  }
+
+  const goToSlide = (index: number) => {
+    setDirection(index > currentSlide ? 1 : -1)
+    setCurrentSlide(index)
+  }
+
+  return (
+    <section
+      id="organizers"
+      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
     >
-      {/* Heading */}
-      <motion.h2
-        variants={item}
-        className="text-center text-4xl md:text-5xl lg:text-6xl font-black leading-tight"
-        whileHover={{ scale: 1.02 }}
-        transition={{ type: "spring", stiffness: 300 }}
-      >
-        Meet Our{" "}
-        <span className="bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent">
-          Organizers
-        </span>
-      </motion.h2>
-
-      {/* Introductory Paragraph */}
-      <motion.p variants={item} className="text-xl italic text-gray-600 text-center max-w-3xl mx-auto leading-relaxed">
-        Our dedicated team and esteemed partners work tirelessly to bring you an exceptional conference experience.
-        Discover the minds behind the event.
-      </motion.p>
-
-      <div className="grid gap-8 lg:grid-cols-2">
-        {/* Committees Section */}
+      {/* Enhanced Background Elements */}
+      <div className="absolute inset-0 overflow-hidden">
         <motion.div
-          variants={item}
-          className="bg-white/50 backdrop-blur-md rounded-2xl p-8 shadow-xl border border-white/70 space-y-6"
-        >
-          <h3 className="text-2xl font-bold text-gray-900 text-center flex items-center justify-center gap-2">
-            <Users className="h-6 w-6 text-purple-600" /> Organizing Committees
-          </h3>
-          <div className="grid gap-4 sm:grid-cols-2">
-            {committees.map((c, index) => (
+          className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.3, 1],
+            opacity: [0.3, 0.6, 0.3],
+            rotate: [0, 180, 360],
+          }}
+          transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
+          animate={{
+            scale: [1.2, 1, 1.2],
+            opacity: [0.4, 0.7, 0.4],
+            rotate: [360, 180, 0],
+          }}
+          transition={{ duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+        />
+        <motion.div
+          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-gradient-to-r from-indigo-100/20 to-blue-100/20 rounded-full blur-3xl"
+          animate={{
+            scale: [1, 1.1, 1],
+            opacity: [0.2, 0.5, 0.2],
+          }}
+          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+        />
+      </div>
+
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="visible"
+        viewport={{ once: true }}
+        className="relative z-10 max-w-7xl mx-auto space-y-20"
+      >
+        {/* Enhanced Heading */}
+        <motion.div variants={item} className="text-center space-y-8">
+          <motion.h2
+            className="text-6xl md:text-7xl lg:text-8xl font-black leading-tight text-slate-800"
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 300 }}
+          >
+            Meet Our{" "}
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Organizers
+            </span>
+          </motion.h2>
+          <motion.p variants={item} className="text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium">
+            Our distinguished team of visionary leaders, esteemed academics, and industry experts collaborate to create
+            an extraordinary conference experience that drives innovation and fosters meaningful connections.
+          </motion.p>
+        </motion.div>
+
+        {/* Enhanced Organization Stats */}
+        <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          {organizationStats.map((stat, index) => (
+            <motion.div
+              key={stat.label}
+              className="group bg-white/90 backdrop-blur-xl rounded-3xl p-8 text-center shadow-2xl border border-white/50 cursor-pointer"
+              whileHover={{ scale: 1.08, y: -8 }}
+              onHoverStart={() => setHoveredStat(index)}
+              onHoverEnd={() => setHoveredStat(null)}
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: index * 0.1 }}
+            >
               <motion.div
-                key={c.role}
-                className="group rounded-xl bg-white/70 p-4 shadow-md border border-white/80 flex flex-col items-center text-center cursor-pointer"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5, boxShadow: "0 8px 15px rgba(0,0,0,0.1)" }}
+                className={`${stat.color} mb-4 flex justify-center group-hover:scale-110 transition-transform duration-300`}
+                animate={hoveredStat === index ? { rotate: [0, 10, -10, 0] } : {}}
+                transition={{ duration: 0.5 }}
               >
-                <motion.div
-                  className="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-indigo-500 flex items-center justify-center mb-2 shadow-sm"
-                  variants={iconFloat}
-                  animate="animate"
-                >
-                  {c.icon}
-                </motion.div>
-                <h4 className="font-semibold text-gray-900 group-hover:text-purple-700 transition-colors duration-300">
-                  {c.role}
-                </h4>
-                <p className="text-sm text-gray-700 italic">{c.names.join(", ")}</p>
+                {stat.icon}
               </motion.div>
-            ))}
+              <motion.div
+                className="text-4xl font-black text-slate-800 mb-2"
+                animate={hoveredStat === index ? { scale: [1, 1.1, 1] } : {}}
+                transition={{ duration: 0.3 }}
+              >
+                {stat.value}
+              </motion.div>
+              <div className="text-slate-600 font-semibold text-sm">{stat.label}</div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Committee Slideshow */}
+        <motion.div variants={item} className="space-y-12">
+          <div className="text-center space-y-4">
+            <h3 className="text-4xl font-bold text-slate-800">Distinguished Organizing Committee</h3>
+            <p className="text-lg text-slate-600 max-w-3xl mx-auto">
+              Meet the exceptional leaders who bring decades of experience and unwavering dedication to make this
+              conference a resounding success.
+            </p>
+          </div>
+
+          {/* Slideshow Container */}
+          <div className="relative max-w-2xl mx-auto">
+            {/* Navigation Arrows */}
+            <motion.button
+              onClick={prevSlide}
+              className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 group"
+              whileHover={{ scale: 1.1, x: -5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronLeft className="h-6 w-6 text-slate-700 group-hover:text-blue-600 transition-colors" />
+            </motion.button>
+
+            <motion.button
+              onClick={nextSlide}
+              className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 bg-white/90 backdrop-blur-sm rounded-full p-3 shadow-lg hover:shadow-xl transition-all duration-300 group"
+              whileHover={{ scale: 1.1, x: 5 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <ChevronRight className="h-6 w-6 text-slate-700 group-hover:text-blue-600 transition-colors" />
+            </motion.button>
+
+            {/* Slide Container */}
+            <div className="relative h-[600px] overflow-hidden rounded-3xl">
+              <motion.div
+                key={currentSlide}
+                custom={direction}
+                variants={slideVariants}
+                initial="enter"
+                animate="center"
+                exit="exit"
+                transition={{
+                  x: { type: "spring", stiffness: 300, damping: 30 },
+                  opacity: { duration: 0.2 },
+                  scale: { duration: 0.2 },
+                }}
+                className="absolute inset-0"
+              >
+                <div className="group relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden h-full">
+                  {/* Gradient Background */}
+                  <div
+                    className={`absolute inset-0 bg-gradient-to-br ${committees[currentSlide].color} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}
+                  />
+
+                  {/* Header Section */}
+                  <div className={`relative bg-gradient-to-br ${committees[currentSlide].color} p-10 text-white`}>
+                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20" />
+                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-16 -translate-x-16" />
+
+                    <div className="relative z-10 space-y-6">
+                      <div className="flex items-center justify-between">
+                        <motion.div
+                          className="p-5 bg-white/20 rounded-3xl backdrop-blur-sm"
+                          whileHover={{ rotate: 15, scale: 1.1 }}
+                          transition={{ type: "spring", stiffness: 400 }}
+                        >
+                          {committees[currentSlide].icon}
+                        </motion.div>
+                        <motion.div
+                          animate={{ rotate: [0, 360] }}
+                          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                        >
+                          <Sparkles className="h-8 w-8 text-white/60" />
+                        </motion.div>
+                      </div>
+
+                      <div className="text-center">
+                        <h4 className="text-3xl font-bold mb-3">{committees[currentSlide].role}</h4>
+                        <p className="text-white/90 text-xl font-medium">{committees[currentSlide].names.join(", ")}</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Content Section */}
+                  <div className="relative p-10 space-y-8">
+                    <p className="text-slate-700 leading-relaxed font-medium text-lg text-center">
+                      {committees[currentSlide].bio}
+                    </p>
+
+                    {/* Achievements */}
+                    <div className="space-y-4">
+                      <h5 className="font-bold text-slate-800 text-center uppercase tracking-wide">Key Achievements</h5>
+                      <div className="flex flex-wrap justify-center gap-3">
+                        {committees[currentSlide].achievements.map((achievement, idx) => (
+                          <motion.span
+                            key={idx}
+                            className={`px-4 py-2 bg-gradient-to-r ${committees[currentSlide].accent} text-white text-sm font-semibold rounded-full shadow-lg`}
+                            whileHover={{ scale: 1.05 }}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.3 + idx * 0.1 }}
+                          >
+                            {achievement}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex justify-center gap-4 pt-6">
+                      <Button
+                        variant="outline"
+                        className="flex items-center gap-2 bg-transparent hover:bg-slate-50 border-slate-300 rounded-xl px-6 py-3"
+                      >
+                        <Mail className="h-4 w-4" />
+                        Contact
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="flex items-center gap-2 bg-transparent hover:bg-slate-50 border-slate-300 rounded-xl px-6 py-3"
+                      >
+                        <Linkedin className="h-4 w-4" />
+                        Profile
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Dot Indicators */}
+            <div className="flex justify-center space-x-3 mt-8">
+              {committees.map((_, index) => (
+                <motion.button
+                  key={index}
+                  onClick={() => goToSlide(index)}
+                  className={`w-4 h-4 rounded-full transition-all duration-300 ${
+                    index === currentSlide
+                      ? "bg-gradient-to-r from-blue-600 to-indigo-600 scale-125 shadow-lg"
+                      : "bg-slate-300 hover:bg-slate-400"
+                  }`}
+                  whileHover={{ scale: index === currentSlide ? 1.25 : 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                />
+              ))}
+            </div>
           </div>
         </motion.div>
 
-        {/* Host & Collaborators Section */}
-        <div className="space-y-8">
+        {/* Revolutionary Host & Partners Section */}
+        <div className="grid lg:grid-cols-2 gap-12">
+          {/* Host Institution */}
           <motion.div
-            variants={item}
-            className="group rounded-2xl bg-white/50 p-8 backdrop-blur-md shadow-xl border border-white/70 space-y-4 cursor-pointer"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.6 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -8, scale: 1.02, boxShadow: "0 15px 30px rgba(0,0,0,0.15)" }}
+            variants={cardVariants}
+            className="group bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
+            whileHover={{ scale: 1.02, y: -5 }}
           >
-            <div className="flex items-center gap-3 text-lg font-semibold">
-              <motion.div
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500 flex items-center justify-center shadow-md"
-                variants={iconFloat}
-                animate="animate"
-              >
-                <Building2 className="h-6 w-6 text-white" />
-              </motion.div>
-              <h3 className="text-gray-900 group-hover:text-indigo-700 transition-colors duration-300">
-                Host Institution
-              </h3>
+            <div className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 p-10 text-white overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/20 rounded-full -translate-y-20 translate-x-20" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/20 rounded-full translate-y-16 -translate-x-16" />
+
+              <div className="relative z-10 space-y-6">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    className="p-4 bg-blue-500/20 rounded-2xl backdrop-blur-sm"
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                  >
+                    <Building2 className="h-8 w-8 text-blue-400" />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-3xl font-bold">Host Institution</h3>
+                    <p className="text-slate-300 text-lg">Leading Excellence in Education</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <p className="text-base text-gray-700 italic leading-relaxed">
-              Department of Computer Science, COMSATS University Islamabad, is proud to host this international
-              conference.
-            </p>
-            <Button
-              variant="outline"
-              className="mt-auto group relative overflow-hidden rounded-full border-2 border-indigo-400 bg-white/70 text-indigo-700 hover:bg-indigo-100 hover:text-indigo-800 transition-all duration-300"
-            >
-              <span className="flex items-center gap-2">
-                Learn More
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
-            </Button>
+
+            <div className="p-10 space-y-6">
+              <h4 className="text-2xl font-bold text-slate-800">
+                Department of Biosciences, COMSATS University Islamabad, Sahiwal Campus
+              </h4>
+              <p className="text-slate-600 leading-relaxed text-lg">
+                The Department of Biosciences at COMSATS University Islamabad, Sahiwal Campus, proudly hosts this
+                prestigious conference, bringing together brilliant minds to foster groundbreaking research and
+                meaningful collaborations in the field of biosciences.
+              </p>
+              <div className="flex gap-4">
+                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-2xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300">
+                  <Globe className="w-5 h-5 mr-2" />
+                  Visit Website
+                </Button>
+                <Button variant="outline" className="bg-transparent border-slate-300 rounded-2xl px-6 py-3">
+                  Learn More
+                </Button>
+              </div>
+            </div>
           </motion.div>
 
+          {/* Partners & Collaborators */}
           <motion.div
-            variants={item}
-            className="group rounded-2xl bg-white/50 p-8 backdrop-blur-md shadow-xl border border-white/70 space-y-4 cursor-pointer"
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.6 }}
-            viewport={{ once: true }}
-            whileHover={{ y: -8, scale: 1.02, boxShadow: "0 15px 30px rgba(0,0,0,0.15)" }}
+            variants={cardVariants}
+            className="group bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
+            whileHover={{ scale: 1.02, y: -5 }}
           >
-            <div className="flex items-center gap-3 text-lg font-semibold">
-              <motion.div
-                className="w-12 h-12 rounded-full bg-gradient-to-r from-blue-500 to-cyan-500 flex items-center justify-center shadow-md"
-                variants={iconFloat}
-                animate="animate"
-              >
-                <Handshake className="h-6 w-6 text-white" />
-              </motion.div>
-              <h3 className="text-gray-900 group-hover:text-blue-700 transition-colors duration-300">Collaborators</h3>
+            <div className="relative bg-gradient-to-br from-emerald-600 via-emerald-700 to-teal-800 p-10 text-white overflow-hidden">
+              <div className="absolute top-0 right-0 w-40 h-40 bg-emerald-400/20 rounded-full -translate-y-20 translate-x-20" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-teal-400/20 rounded-full translate-y-16 -translate-x-16" />
+
+              <div className="relative z-10 space-y-6">
+                <div className="flex items-center gap-4">
+                  <motion.div
+                    className="p-4 bg-emerald-400/20 rounded-2xl backdrop-blur-sm"
+                    whileHover={{ rotate: 15, scale: 1.1 }}
+                  >
+                    <Handshake className="h-8 w-8 text-emerald-300" />
+                  </motion.div>
+                  <div>
+                    <h3 className="text-3xl font-bold">Strategic Partners</h3>
+                    <p className="text-emerald-100 text-lg">Collaborating for Excellence</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <ul className="list-disc pl-5 space-y-2 text-base text-gray-700 italic">
-              {collaborators.map((c) => (
-                <li key={c}>{c}</li>
-              ))}
-            </ul>
-            <Button
-              variant="outline"
-              className="mt-auto group relative overflow-hidden rounded-full border-2 border-blue-400 bg-white/70 text-blue-700 hover:bg-blue-100 hover:text-blue-800 transition-all duration-300"
-            >
-              <span className="flex items-center gap-2">
-                View Partners
-                <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-              </span>
-            </Button>
+
+            <div className="p-10 space-y-8">
+              <div className="grid gap-6">
+                {collaborators.map((collaborator, idx) => (
+                  <motion.div
+                    key={collaborator.name}
+                    className="group/partner bg-gradient-to-r from-slate-50 to-gray-50 rounded-2xl p-6 border border-slate-200 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                    whileHover={{ scale: 1.03, x: 5 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: idx * 0.2 }}
+                  >
+                    <div className="flex items-center gap-4 mb-3">
+                      <img
+                        src={collaborator.logo || "/placeholder.svg"}
+                        alt={collaborator.name}
+                        className="w-16 h-8 object-contain"
+                      />
+                      <div className="flex-1">
+                        <h5 className="font-bold text-slate-800 text-sm leading-tight">{collaborator.name}</h5>
+                        <p className="text-slate-600 text-xs mt-1">{collaborator.description}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium opacity-0 group-hover/partner:opacity-100 transition-opacity">
+                      <Globe className="h-4 w-4" />
+                      <span>Visit Website</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+
+              <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl py-4 shadow-lg hover:shadow-xl transition-all duration-300">
+                <Handshake className="w-5 h-5 mr-2" />
+                Become a Partner
+              </Button>
+            </div>
           </motion.div>
         </div>
-      </div>
-    </motion.div>
-  </section>
-)
+
+        {/* Enhanced CTA Section */}
+        <motion.div variants={item} className="text-center pt-16">
+          <motion.div
+            className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 rounded-3xl p-16 text-white overflow-hidden"
+            whileHover={{ scale: 1.02 }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full -translate-y-32 translate-x-32" />
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500/10 rounded-full translate-y-24 -translate-x-24" />
+
+            <div className="relative z-10 space-y-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ type: "spring", stiffness: 200, delay: 0.2 }}
+              >
+                <Users className="h-16 w-16 text-blue-400 mx-auto mb-6" />
+              </motion.div>
+
+              <div className="space-y-4">
+                <h3 className="text-4xl md:text-5xl font-black">Join Our Organizing Team</h3>
+                <p className="text-slate-300 text-xl max-w-3xl mx-auto leading-relaxed">
+                  Passionate about making a difference? We're always seeking dedicated volunteers and committee members
+                  to help shape the future of our conferences.
+                </p>
+              </div>
+
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button
+                  size="lg"
+                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-12 py-6 rounded-3xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 text-xl"
+                >
+                  <motion.div className="flex items-center gap-4">
+                    <Users className="w-7 h-7" />
+                    Get Involved Today
+                    <motion.div
+                      animate={{ x: [0, 8, 0] }}
+                      transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                    >
+                      <Sparkles className="w-7 h-7" />
+                    </motion.div>
+                  </motion.div>
+                </Button>
+              </motion.div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </motion.div>
+    </section>
+  )
+}
 
 export default Organizers
-
