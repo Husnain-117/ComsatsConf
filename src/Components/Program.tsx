@@ -296,28 +296,35 @@ export const Program: React.FC = () => {
         {/* Enhanced CTA Section */}
         <motion.div variants={item} className="text-center pt-16">
           <motion.div className="inline-block" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              size="lg"
-              className="group relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 px-12 py-6 text-2xl font-bold text-white shadow-2xl transition-all duration-500 hover:shadow-blue-500/25 border-0"
-            >
-              <motion.div className="flex items-center gap-4">
-                <motion.div
-                  animate={{ rotate: [0, 360] }}
-                  transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                  className="group-hover:animate-none"
-                >
-                  <Download className="w-7 h-7" />
-                </motion.div>
-                Stay Updated on Program Details
-                <motion.div
-                  animate={{ x: [0, 10, 0] }}
-                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-                >
-                  <ArrowRight className="w-7 h-7" />
-                </motion.div>
-              </motion.div>
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-            </Button>
+          <Button
+  size="lg"
+  className="
+    group relative overflow-hidden rounded-3xl
+    bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600
+    px-4 py-3 sm:px-8 sm:py-5 md:px-12 md:py-6
+    text-base sm:text-xl md:text-2xl font-bold text-white
+    shadow-2xl transition-all duration-500 hover:shadow-blue-500/25 border-0
+    w-full sm:w-auto
+  "
+>
+  <motion.div className="flex items-center gap-2 sm:gap-4 justify-center">
+    <motion.div
+      animate={{ rotate: [0, 360] }}
+      transition={{ duration: 3, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+      className="group-hover:animate-none"
+    >
+      <Download className="w-5 h-5 sm:w-7 sm:h-7" />
+    </motion.div>
+    <span className="truncate">Stay Updated on Program Details</span>
+    <motion.div
+      animate={{ x: [0, 10, 0] }}
+      transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+    >
+      <ArrowRight className="w-5 h-5 sm:w-7 sm:h-7" />
+    </motion.div>
+  </motion.div>
+  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+</Button>
           </motion.div>
         </motion.div>
       </motion.div>

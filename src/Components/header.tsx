@@ -74,6 +74,7 @@ const Header: React.FC = () => {
   const [mobileExpanded, setMobileExpanded] = useState<Record<string, boolean>>({})
   const [scrolled, setScrolled] = useState(false)
 
+  anchorOpen;
   /* ---------------------------------------------------------------------- */
   /*                                SCROLL EFFECT                             */
   /* ---------------------------------------------------------------------- */
@@ -286,17 +287,7 @@ const Header: React.FC = () => {
                         <span className="text-blue-300 text-sm block">2026</span>
                       </div>
                     </div>
-                    <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label="Close mobile menu"
-                        className="text-slate-300 hover:text-white hover:bg-white/10 rounded-full"
-                        onClick={() => setMobileDrawerOpen(false)}
-                      >
-                        <XIcon className="h-6 w-6" />
-                      </Button>
-                    </motion.div>
+                    
                   </div>
 
                   {/* Mobile Search */}

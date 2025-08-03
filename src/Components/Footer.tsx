@@ -484,7 +484,7 @@ export const Footer: React.FC = () => {
                 &copy; {new Date().getFullYear()} Food Science & Nutrition Conference (FSNC). All rights reserved.
               </p>
               <p className="text-white/40 text-xs flex items-center justify-center lg:justify-start gap-2">
-                Designed with <Heart className="h-3 w-3 text-pink-400" /> for the future of food science
+                Designed By Systoid <Heart className="h-3 w-3 text-pink-400" /> for the future of food science
               </p>
             </div>
 

@@ -20,7 +20,6 @@ import {
   Dna,
   ArrowRight,
   Home,
-  Mail,
   BellRing,
 } from "lucide-react"
 import { Button } from "@/Components/ui/button"
@@ -392,13 +391,15 @@ export const CallForPapers: React.FC = () => {
 
           <div className="p-12">
             <div className="space-y-6 max-w-2xl mx-auto text-center">
-              <div className="flex items-center justify-center gap-3 text-lg text-slate-700">
-                <Mail className="w-5 h-5 text-blue-600" />
-                <span className="font-medium">Submit to: </span>
-                <a href="mailto:fsnconference@cuisahiwal.edu.pk" className="text-blue-600 font-semibold hover:underline">
-                  fsnconference@cuisahiwal.edu.pk
-                </a>
-              </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2 text-base sm:text-lg md:text-xl text-slate-700">
+  <span className="font-medium">Submit to:</span>
+  <a
+    href="mailto:fsnconference@cuisahiwal.edu.pk"
+    className="text-blue-700 font-semibold break-all sm:ml-2 text-base sm:text-lg md:text-xl"
+  >
+    fsnconference@cuisahiwal.edu.pk
+  </a>
+</div>
             
               <div className="flex items-center justify-center gap-3 text-lg text-slate-700">
                 <BellRing className="w-5 h-5 text-blue-600" />

@@ -185,16 +185,20 @@ export const AccommodationTravel: React.FC = () => {
       >
         {/* Enhanced Heading */}
         <motion.div variants={item} className="text-center space-y-8">
-          <motion.h2
-            className="text-6xl md:text-7xl lg:text-8xl font-black leading-tight text-slate-800"
-            whileHover={{ scale: 1.02 }}
-            transition={{ type: "spring", stiffness: 300 }}
-          >
-            Accommodation &{" "}
-            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-              Travel
-            </span>
-          </motion.h2>
+        <motion.h2
+  className="
+    text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
+    font-black leading-tight text-slate-800 text-center
+    flex flex-wrap items-center justify-center gap-x-2
+  "
+  whileHover={{ scale: 1.02 }}
+  transition={{ type: 'spring', stiffness: 300 }}
+>
+  <span>Accommodation&nbsp;&amp;&nbsp;</span>
+  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+    Travel
+  </span>
+</motion.h2>
           <motion.p variants={item} className="text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium">
             Experience seamless travel and comfortable stays. Discover our carefully selected accommodations and
             comprehensive travel solutions designed to enhance your conference journey.
@@ -236,7 +240,7 @@ export const AccommodationTravel: React.FC = () => {
           <div className="bg-white/90 backdrop-blur-xl rounded-3xl p-3 shadow-2xl border border-white/50">
             {[
               { id: "hotels", label: "Premium Hotels", icon: <Hotel className="h-6 w-6" /> },
-              { id: "transport", label: "Travel Guide", icon: <Navigation className="h-6 w-6" /> },
+              { id: "transport", label: "Travel   Guide", icon: <Navigation className="h-6 w-6" /> },
             ].map((tab) => (
               <motion.button
                 key={tab.id}

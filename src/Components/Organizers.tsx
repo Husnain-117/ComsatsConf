@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { motion } from "framer-motion"
+import { useState, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
 import type { Variants } from "framer-motion"
 import {
   Users,
@@ -45,21 +45,37 @@ const cardVariants: Variants = {
 
 const slideVariants: Variants = {
   enter: (direction: number) => ({
-    x: direction > 0 ? 300 : -300,
+    x: direction > 0 ? 120 : -120,
     opacity: 0,
-    scale: 0.8,
+    scale: 0.97,
+    filter: "blur(3px)",
+    zIndex: 0,
   }),
   center: {
-    zIndex: 1,
     x: 0,
     opacity: 1,
     scale: 1,
+    filter: "blur(0px)",
+    zIndex: 1,
+    transition: {
+      x: { type: "spring", stiffness: 120, damping: 18 },
+      opacity: { duration: 0.35 },
+      scale: { duration: 0.25 },
+      filter: { duration: 0.25 },
+    },
   },
   exit: (direction: number) => ({
-    zIndex: 0,
-    x: direction < 0 ? 300 : -300,
+    x: direction < 0 ? 120 : -120,
     opacity: 0,
-    scale: 0.8,
+    scale: 0.97,
+    filter: "blur(3px)",
+    zIndex: 0,
+    transition: {
+      x: { type: "spring", stiffness: 120, damping: 18 },
+      opacity: { duration: 0.32 },
+      scale: { duration: 0.22 },
+      filter: { duration: 0.22 },
+    },
   }),
 }
 
@@ -152,6 +168,14 @@ export const Organizers: React.FC = () => {
     setDirection(index > currentSlide ? 1 : -1)
     setCurrentSlide(index)
   }
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDirection(1)
+      setCurrentSlide((prev) => (prev + 1) % committees.length)
+    }, 5000)
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <section
@@ -278,100 +302,103 @@ export const Organizers: React.FC = () => {
 
             {/* Slide Container */}
             <div className="relative h-[600px] overflow-hidden rounded-3xl">
-              <motion.div
-                key={currentSlide}
-                custom={direction}
-                variants={slideVariants}
-                initial="enter"
-                animate="center"
-                exit="exit"
-                transition={{
-                  x: { type: "spring", stiffness: 300, damping: 30 },
-                  opacity: { duration: 0.2 },
-                  scale: { duration: 0.2 },
-                }}
-                className="absolute inset-0"
-              >
-                <div className="group relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden h-full">
-                  {/* Gradient Background */}
-                  <div
-                    className={`absolute inset-0 bg-gradient-to-br ${committees[currentSlide].color} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}
-                  />
+              <AnimatePresence initial={false} custom={direction}>
+                <motion.div
+                  key={currentSlide}
+                  custom={direction}
+                  variants={slideVariants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  className="absolute inset-0 w-full h-full"
+                  transition={{
+                    x: { type: "spring", stiffness: 120, damping: 18 },
+                    opacity: { duration: 0.35 },
+                    scale: { duration: 0.25 },
+                    filter: { duration: 0.25 },
+                  }}
+                >
+                  <div className="group relative bg-white/95 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden h-full">
+                    {/* Gradient Background */}
+                    <div
+                      className={`absolute inset-0 bg-gradient-to-br ${committees[currentSlide].color} opacity-5 group-hover:opacity-10 transition-opacity duration-500`}
+                    />
 
-                  {/* Header Section */}
-                  <div className={`relative bg-gradient-to-br ${committees[currentSlide].color} p-10 text-white`}>
-                    <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20" />
-                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-16 -translate-x-16" />
+                    {/* Header Section */}
+                    <div className={`relative bg-gradient-to-br ${committees[currentSlide].color} p-10 text-white`}>
+                      <div className="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full -translate-y-20 translate-x-20" />
+                      <div className="absolute bottom-0 left-0 w-32 h-32 bg-white/5 rounded-full translate-y-16 -translate-x-16" />
 
-                    <div className="relative z-10 space-y-6">
-                      <div className="flex items-center justify-between">
-                        <motion.div
-                          className="p-5 bg-white/20 rounded-3xl backdrop-blur-sm"
-                          whileHover={{ rotate: 15, scale: 1.1 }}
-                          transition={{ type: "spring", stiffness: 400 }}
-                        >
-                          {committees[currentSlide].icon}
-                        </motion.div>
-                        <motion.div
-                          animate={{ rotate: [0, 360] }}
-                          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-                        >
-                          <Sparkles className="h-8 w-8 text-white/60" />
-                        </motion.div>
-                      </div>
-
-                      <div className="text-center">
-                        <h4 className="text-3xl font-bold mb-3">{committees[currentSlide].role}</h4>
-                        <p className="text-white/90 text-xl font-medium">{committees[currentSlide].names.join(", ")}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Content Section */}
-                  <div className="relative p-10 space-y-8">
-                    <p className="text-slate-700 leading-relaxed font-medium text-lg text-center">
-                      {committees[currentSlide].bio}
-                    </p>
-
-                    {/* Achievements */}
-                    <div className="space-y-4">
-                      <h5 className="font-bold text-slate-800 text-center uppercase tracking-wide">Key Achievements</h5>
-                      <div className="flex flex-wrap justify-center gap-3">
-                        {committees[currentSlide].achievements.map((achievement, idx) => (
-                          <motion.span
-                            key={idx}
-                            className={`px-4 py-2 bg-gradient-to-r ${committees[currentSlide].accent} text-white text-sm font-semibold rounded-full shadow-lg`}
-                            whileHover={{ scale: 1.05 }}
-                            initial={{ opacity: 0, scale: 0.8 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            transition={{ delay: 0.3 + idx * 0.1 }}
+                      <div className="relative z-10 space-y-6">
+                        <div className="flex items-center justify-between">
+                          <motion.div
+                            className="p-5 bg-white/20 rounded-3xl backdrop-blur-sm"
+                            whileHover={{ rotate: 15, scale: 1.1 }}
+                            transition={{ type: "spring", stiffness: 400 }}
                           >
-                            {achievement}
-                          </motion.span>
-                        ))}
+                            {committees[currentSlide].icon}
+                          </motion.div>
+                          <motion.div
+                            animate={{ rotate: [0, 360] }}
+                            transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                          >
+                            <Sparkles className="h-8 w-8 text-white/60" />
+                          </motion.div>
+                        </div>
+
+                        <div className="text-center">
+                          <h4 className="text-3xl font-bold mb-3">{committees[currentSlide].role}</h4>
+                          <p className="text-white/90 text-xl font-medium">{committees[currentSlide].names.join(", ")}</p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* Action Buttons */}
-                    <div className="flex justify-center gap-4 pt-6">
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-2 bg-transparent hover:bg-slate-50 border-slate-300 rounded-xl px-6 py-3"
-                      >
-                        <Mail className="h-4 w-4" />
-                        Contact
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="flex items-center gap-2 bg-transparent hover:bg-slate-50 border-slate-300 rounded-xl px-6 py-3"
-                      >
-                        <Linkedin className="h-4 w-4" />
-                        Profile
-                      </Button>
+                    {/* Content Section */}
+                    <div className="relative p-10 space-y-8">
+                      <p className="text-slate-700 leading-relaxed font-medium text-lg text-center">
+                        {committees[currentSlide].bio}
+                      </p>
+
+                      {/* Achievements */}
+                      <div className="space-y-4">
+                        <h5 className="font-bold text-slate-800 text-center uppercase tracking-wide">Key Achievements</h5>
+                        <div className="flex flex-wrap justify-center gap-3">
+                          {committees[currentSlide].achievements.map((achievement, idx) => (
+                            <motion.span
+                              key={idx}
+                              className={`px-4 py-2 bg-gradient-to-r ${committees[currentSlide].accent} text-white text-sm font-semibold rounded-full shadow-lg`}
+                              whileHover={{ scale: 1.05 }}
+                              initial={{ opacity: 0, scale: 0.8 }}
+                              animate={{ opacity: 1, scale: 1 }}
+                              transition={{ delay: 0.3 + idx * 0.1 }}
+                            >
+                              {achievement}
+                            </motion.span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action Buttons */}
+                      <div className="flex justify-center gap-4 pt-6">
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2 bg-transparent hover:bg-slate-50 border-slate-300 rounded-xl px-6 py-3"
+                        >
+                          <Mail className="h-4 w-4"  />
+                          Contact
+                        </Button>
+                        <Button
+                          variant="outline"
+                          className="flex items-center gap-2 bg-transparent hover:bg-slate-50 border-slate-300 rounded-xl px-6 py-3"
+                        >
+                          <Linkedin className="h-4 w-4" />
+                          Profile
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </motion.div>
+                </motion.div>
+              </AnimatePresence>
             </div>
 
             {/* Dot Indicators */}
@@ -402,8 +429,8 @@ export const Organizers: React.FC = () => {
             whileHover={{ scale: 1.02, y: -5 }}
           >
             <div className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 p-10 text-white overflow-hidden">
-              <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/20 rounded-full -translate-y-20 translate-x-20" />
-              <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/20 rounded-full translate-y-16 -translate-x-16" />
+              <div className="absolute top-0 right-0 w-40 h-40 bg-blue-500/10 rounded-full -translate-y-20 translate-x-20" />
+              <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-500/10 rounded-full translate-y-16 -translate-x-16" />
 
               <div className="relative z-10 space-y-6">
                 <div className="flex items-center gap-4">
@@ -414,28 +441,54 @@ export const Organizers: React.FC = () => {
                     <Building2 className="h-8 w-8 text-blue-400" />
                   </motion.div>
                   <div>
-                    <h3 className="text-3xl font-bold">Host Institution</h3>
-                    <p className="text-slate-300 text-lg">Leading Excellence in Education</p>
+                    <h3 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">Host Institution</h3>
+                    <p className="text-white/90 text-lg md:text-xl font-semibold drop-shadow-md">Leading Excellence in Education</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="p-10 space-y-6">
-              <h4 className="text-2xl font-bold text-slate-800">
-                Department of Biosciences, COMSATS University Islamabad, Sahiwal Campus
-              </h4>
-              <p className="text-slate-600 leading-relaxed text-lg">
-                The Department of Biosciences at COMSATS University Islamabad, Sahiwal Campus, proudly hosts this
-                prestigious conference, bringing together brilliant minds to foster groundbreaking research and
-                meaningful collaborations in the field of biosciences.
-              </p>
-              <div className="flex gap-4">
-                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-2xl px-6 py-3 shadow-lg hover:shadow-xl transition-all duration-300">
+            <div className="p-10 space-y-8">
+              <div className="space-y-4">
+                <h4 className="text-xl md:text-2xl font-bold text-slate-900 leading-tight">
+                  Department of Biosciences
+                </h4>
+                <div className="text-lg md:text-xl font-semibold text-blue-600">
+                  COMSATS University Islamabad, Sahiwal Campus
+                </div>
+              </div>
+              
+              <div className="space-y-4">
+                <p className="text-slate-700 leading-relaxed text-base md:text-lg font-medium">
+                  The Department of Biosciences at COMSATS University Islamabad, Sahiwal Campus, proudly hosts this prestigious conference, bringing together brilliant minds to foster groundbreaking research and meaningful collaborations in the field of biosciences.
+                </p>
+                
+                <div className="grid md:grid-cols-2 gap-4 pt-2">
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Leading Research Excellence</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm font-medium">International Collaboration</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Innovation Hub</span>
+                  </div>
+                  <div className="flex items-center gap-3 text-slate-600">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span className="text-sm font-medium">Academic Excellence</span>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex flex-wrap gap-4 pt-4">
+                <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold rounded-2xl px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300 text-base md:text-lg">
                   <Globe className="w-5 h-5 mr-2" />
                   Visit Website
                 </Button>
-                <Button variant="outline" className="bg-transparent border-slate-300 rounded-2xl px-6 py-3">
+                <Button variant="outline" className="bg-transparent border-slate-300 hover:border-blue-500 rounded-2xl px-8 py-3 text-base md:text-lg text-slate-800 font-semibold hover:text-blue-600 transition-colors">
                   Learn More
                 </Button>
               </div>
@@ -461,8 +514,8 @@ export const Organizers: React.FC = () => {
                     <Handshake className="h-8 w-8 text-emerald-300" />
                   </motion.div>
                   <div>
-                    <h3 className="text-3xl font-bold">Strategic Partners</h3>
-                    <p className="text-emerald-100 text-lg">Collaborating for Excellence</p>
+                    <h3 className="text-3xl md:text-4xl font-extrabold text-white drop-shadow-lg">Strategic Partners</h3>
+                    <p className="text-white/90 text-lg md:text-xl font-semibold drop-shadow-md">Collaborating for Excellence</p>
                   </div>
                 </div>
               </div>
@@ -479,26 +532,26 @@ export const Organizers: React.FC = () => {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: idx * 0.2 }}
                   >
-                    <div className="flex items-center gap-4 mb-3">
+                    <div className="flex items-center gap-4 mb-4">
                       <img
                         src={collaborator.logo || "/placeholder.svg"}
                         alt={collaborator.name}
                         className="w-16 h-8 object-contain"
                       />
                       <div className="flex-1">
-                        <h5 className="font-bold text-slate-800 text-sm leading-tight">{collaborator.name}</h5>
-                        <p className="text-slate-600 text-xs mt-1">{collaborator.description}</p>
+                        <h5 className="font-black text-black text-lg md:text-xl leading-tight mb-1">{collaborator.name}</h5>
+                        <p className="text-black text-base md:text-lg font-bold">{collaborator.description}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2 text-emerald-600 text-sm font-medium opacity-0 group-hover/partner:opacity-100 transition-opacity">
-                      <Globe className="h-4 w-4" />
+                    <div className="flex items-center gap-2 text-emerald-700 text-base font-bold opacity-0 group-hover/partner:opacity-100 transition-opacity">
+                      <Globe className="h-5 w-5" />
                       <span>Visit Website</span>
                     </div>
                   </motion.div>
                 ))}
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl py-4 shadow-lg hover:shadow-xl transition-all duration-300">
+              <Button className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-bold rounded-2xl py-4 shadow-lg hover:shadow-xl transition-all duration-300 text-lg md:text-xl">
                 <Handshake className="w-5 h-5 mr-2" />
                 Become a Partner
               </Button>
@@ -537,8 +590,14 @@ export const Organizers: React.FC = () => {
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button
                   size="lg"
-                  className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-12 py-6 rounded-3xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 text-xl"
-                >
+                  className="
+                    group relative overflow-hidden rounded-2xl
+                    bg-gradient-to-r from-blue-600 to-indigo-600
+                    px-4 py-3 sm:px-8 sm:py-5 md:px-10 md:py-6
+                    text-base sm:text-xl md:text-2xl font-bold text-white
+                    shadow-2xl transition-all duration-500 hover:shadow-blue-500/25 hover:scale-105 border-0
+                    w-full sm:w-auto
+                  "                >
                   <motion.div className="flex items-center gap-4">
                     <Users className="w-7 h-7" />
                     Get Involved Today
