@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { motion, type Variants } from "framer-motion"
 import { Button } from "@/Components/ui/button"
 import { Calendar, MapPin, Users, Award, Clock, ArrowRight, Sparkles, ChevronDown } from "lucide-react"
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 interface TimeLeft {
   days: number
@@ -28,6 +30,44 @@ const calculateTimeLeft = (targetDate: Date): TimeLeft => {
 const formatTime = (time: number) => String(time).padStart(2, "0")
 
 export default function Hero() {
+  const [downloading, setDownloading] = useState(false);
+  const [downloaded, setDownloaded] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    setDownloading(true);
+    setDownloaded(false);
+    const toastId = toast.info('Starting download...', {
+      position: 'top-center',
+      autoClose: 1500,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: false,
+      progress: undefined,
+    });
+    try {
+      // Fetch the PDF from public folder
+      const response = await fetch('/FSNC 2025.pdf');
+      if (!response.ok) throw new Error('File not found');
+      const blob = await response.blob();
+      // Create a download link
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'FSNC 2025.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      setDownloaded(true);
+      toast.update(toastId, { render: 'Download complete!', type: 'success', autoClose: 2000, isLoading: false });
+      setTimeout(() => setDownloaded(false), 2000);
+    } catch (e) {
+      toast.update(toastId, { render: 'PDF download failed.', type: 'error', autoClose: 2000, isLoading: false });
+    } finally {
+      setDownloading(false);
+    }
+  }
   const targetDate = new Date("2025-10-13T09:00:00")
   const [timeLeft, setTimeLeft] = useState<TimeLeft>(calculateTimeLeft(targetDate))
 
@@ -63,16 +103,7 @@ export default function Hero() {
     },
   }
 
-  const floatVariants: Variants = {
-    animate: {
-      y: [-10, 10, -10],
-      transition: {
-        duration: 4,
-        repeat: Number.POSITIVE_INFINITY,
-        ease: "easeInOut",
-      },
-    },
-  }
+ 
 
   const glowVariants: Variants = {
     animate: {
@@ -92,16 +123,10 @@ export default function Hero() {
   return (
     <>
       {/* First Section - Hero */}
-      <section className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-slate-900 via-blue-900 to-indigo-900 px-8 py-16 text-white font-display">
-        {/* Enhanced gradient overlays */}
-        <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-blue-900/10 pointer-events-none z-[2]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-900/10 via-transparent to-indigo-900/10 pointer-events-none z-[2]" />
-
-        {/* Animated color orbs for visual interest */}
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-500/20 to-indigo-500/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-indigo-500/20 to-purple-500/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-gradient-to-r from-purple-500/15 to-blue-500/15 rounded-full blur-3xl animate-pulse delay-500" />
-
+      <section
+        className="relative flex min-h-screen items-center justify-center overflow-hidden px-8 py-16 font-display"
+        style={{ backgroundColor: "rgb(153, 173, 193)" }}
+      >
         {/* Main content container */}
         <motion.div
           className="relative z-10 flex flex-col items-center justify-center space-y-8 text-center max-w-6xl mx-auto"
@@ -112,38 +137,30 @@ export default function Hero() {
           {/* Date Badge */}
           <motion.div
             variants={itemVariants}
-            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white shadow-2xl"
+            className="inline-flex items-center gap-3 px-6 py-3 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-[#1a2233] shadow-2xl"
           >
-            <Calendar className="w-5 h-5 text-blue-400" />
-            <span className="text-xl font-bold text-blue-300">
+            <Calendar className="w-5 h-5 text-blue-500" />
+            <span className="text-xl font-bold text-blue-700">
               13-14<sup className="text-sm">th</sup>
             </span>
-            <span className="text-lg font-medium">October 2025</span>
+            <span className="text-base font-semibold text-[#1a2233]">October 2025</span>
           </motion.div>
 
           {/* Main Heading */}
-          <motion.div variants={itemVariants} className="space-y-10">
-            <motion.h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-center leading-tight tracking-tight"
-              variants={floatVariants}
-              animate="animate"
-              whileHover={{ scale: 1.05 }}
-              transition={{ type: "spring", stiffness: 300, damping: 20 }}
-            >
-              <span className="text-white drop-shadow-lg">Advancing&nbsp;</span>
-              <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-purple-400 bg-clip-text text-transparent drop-shadow-lg">
-                Food Science &amp; Nutrition
-              </span>
-            </motion.h1>
+          <motion.h1
+            variants={itemVariants}
+            className="text-5xl md:text-6xl font-black mb-6 text-[#1a2233] drop-shadow-[0_2px_8px_rgba(0,0,0,0.09)]"
+          >
+            Advancing <span className="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-fuchsia-500">Food Science & Nutrition</span>
+          </motion.h1>
 
-            {/* Subtitle */}
-            <motion.p
-              className="text-base md:text-lg text-blue-100 max-w-3xl mx-auto leading-relaxed mt-8"
-              variants={itemVariants}
-            >
-              Join global and local experts to bridge research, policy, and practice in food science and nutrition at <span className="font-semibold text-blue-300">COMSATS University Islamabad (Sahiwal Campus)</span> on <span className="font-semibold text-blue-300">October&nbsp;13–14,&nbsp;2025</span> in celebration of <span className="font-semibold text-purple-300">World Food Day&nbsp;2025</span>, fostering innovation, interdisciplinary collaboration, and research-to-policy translation for a healthier, food-secure future.
-            </motion.p>
-          </motion.div>
+          {/* Subtitle / Description */}
+          <motion.p
+            variants={itemVariants}
+            className="mt-4 mb-8 text-lg md:text-xl font-medium text-[#233047]/90"
+          >
+            Join global and local experts to bridge research, policy, and practice in food science and nutrition at <span className="font-semibold text-blue-800">COMSATS University Islamabad (Sahiwal Campus)</span> on <span className="font-semibold text-blue-800">October 13–14, 2025</span> in celebration of <span className="font-semibold text-fuchsia-700">World Food Day 2025</span>, fostering innovation, interdisciplinary collaboration, and research-to-policy transition for a healthier, food-secure future.
+          </motion.p>
 
           {/* Three Small Cards */}
           <motion.div
@@ -157,7 +174,7 @@ export default function Hero() {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                className="group p-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/40 transition-all duration-500 hover:bg-white/20 shadow-xl hover:shadow-2xl relative overflow-hidden"
+                className="group p-4 rounded-xl bg-white/70 border border-white/60 hover:border-blue-200 transition-all duration-500 hover:bg-white/90 shadow-xl hover:shadow-2xl relative overflow-hidden"
                 whileHover={{ y: -5, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 300 }}
               >
@@ -167,8 +184,8 @@ export default function Hero() {
                 >
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-white/80 group-hover:text-white transition-colors duration-300">{item.desc}</p>
+                <h3 className="text-xl font-bold text-[#1a2233] mb-2">{item.title}</h3>
+                <p className="text-[#233047]/80 group-hover:text-[#1a2233] transition-colors duration-300">{item.desc}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -205,8 +222,10 @@ export default function Hero() {
       </section>
 
       {/* Second Section - Countdown and Details */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80 px-8 py-16 text-slate-800 font-display">
-        <motion.div
+      <section
+  className="relative min-h-screen flex items-center justify-center px-8 py-16 font-display"
+  style={{ backgroundColor: "rgb(153, 173, 193)" }}
+>  <motion.div
           className="relative z-10 flex flex-col items-center justify-center space-y-12 text-center max-w-7xl mx-auto"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -373,24 +392,33 @@ export default function Hero() {
             </Button>
 
             <Button
-              asChild
               variant="outline"
-              className="group w-full sm:w-auto rounded-full border-2 border-slate-300 bg-white/80 backdrop-blur-sm px-8 py-4 text-lg font-bold text-slate-700 hover:text-slate-900 shadow-xl transition-all duration-300 hover:border-slate-400 hover:bg-white/90 hover:scale-105"
+              className="group w-full sm:w-auto rounded-full border-2 border-slate-300 bg-white/80 backdrop-blur-sm px-8 py-4 text-lg font-bold text-slate-700 hover:text-slate-900 shadow-xl transition-all duration-300 hover:border-slate-400 hover:bg-white/90 hover:scale-105 flex items-center gap-2 relative"
+              onClick={handleDownloadPDF}
+              disabled={downloading}
             >
-              <motion.a
-                href="#call-for-papers"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex items-center gap-2"
-              >
-                <Clock className="w-5 h-5" />
-                Submit Abstract
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
-              </motion.a>
+              {downloading ? (
+                <span className="flex items-center gap-2">
+                  <svg className="animate-spin h-5 w-5 text-indigo-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                  Preparing PDF...
+                </span>
+              ) : downloaded ? (
+                <span className="flex items-center gap-2 text-emerald-600">
+                  <Sparkles className="w-5 h-5 animate-bounce" />
+                  Downloaded!
+                </span>
+              ) : (
+                <span className="flex items-center gap-2">
+                  <Clock className="w-5 h-5" />
+                  Download PDF
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-300" />
+                </span>
+              )}
             </Button>
           </motion.div>
         </motion.div>
       </section>
+      <ToastContainer />
     </>
   )
 }

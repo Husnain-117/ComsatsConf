@@ -108,38 +108,9 @@ export const Program: React.FC = () => {
   return (
     <section
       id="program"
-      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+      className="relative min-h-screen py-20 px-6 overflow-hidden"
+      style={{ backgroundColor: "rgb(153, 173, 193)" }}
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.2, 1],
-            opacity: [0.3, 0.5, 0.3],
-            rotate: [0, 180, 360],
-          }}
-          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-200/30 to-blue-200/30 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.4, 0.6, 0.4],
-            rotate: [360, 180, 0],
-          }}
-          transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-indigo-100/20 to-blue-100/20 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.1, 1],
-            opacity: [0.2, 0.4, 0.2],
-          }}
-          transition={{ duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-        />
-      </div>
-
       <motion.div
         variants={container}
         initial="hidden"
@@ -232,9 +203,8 @@ export const Program: React.FC = () => {
         {/* Final Program Announcement - Separate Professional Section */}
         <motion.div
           variants={cardVariants}
-          className="relative bg-gradient-to-br from-slate-800 via-slate-700 to-slate-900 rounded-3xl shadow-2xl overflow-hidden"
+          className="relative bg-slate-800 rounded-3xl shadow-2xl overflow-hidden"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-indigo-600/20" />
           <div className="relative p-12 text-center space-y-8">
             <motion.div
               initial={{ scale: 0 }}

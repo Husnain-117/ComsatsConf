@@ -29,6 +29,7 @@ import { Input } from "@/Components/ui/input"
 import { Label } from "@/Components/ui/label"
 import { Textarea } from "@/Components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/Components/ui/select"
+import axios from "axios"
 
 const container: Variants = {
   hidden: { opacity: 0 },
@@ -103,6 +104,8 @@ export const Contact: React.FC = () => {
     inquiryType: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
@@ -111,39 +114,33 @@ export const Contact: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsSubmitting(true)
-    // Simulate form submission
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-    setIsSubmitting(false)
-    // Reset form or show success message
+    try {
+      setError(null)
+      setSuccess(false)
+      await axios.post("/api/contact", formData)
+      setSuccess(true)
+      setFormData({
+        name: "",
+        email: "",
+        organization: "",
+        subject: "",
+        message: "",
+        inquiryType: "",
+      })
+    } catch (err) {
+      console.error(err)
+      setError("Failed to send message. Please try again later.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
     <section
       id="contact"
-      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+      className="relative min-h-screen py-20 px-6 overflow-hidden"
+      style={{ backgroundColor: "rgb(153, 173, 193)" }}
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.3, 0.6, 0.3],
-            rotate: [0, 180, 360],
-          }}
-          transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.4, 0.7, 0.4],
-            rotate: [360, 180, 0],
-          }}
-          transition={{ duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-        />
-      </div>
-
       <motion.div
         variants={container}
         initial="hidden"
@@ -487,6 +484,12 @@ export const Contact: React.FC = () => {
                     )}
                   </motion.div>
                 </Button>
+                {error && (
+                  <div className="text-red-600 font-semibold text-center mt-4">{error}</div>
+                )}
+                {success && (
+                  <div className="text-green-600 font-semibold text-center mt-4">Message sent successfully!</div>
+                )}
                 
                 <div className="mt-4 text-center">
                   <p className="text-sm text-slate-500 flex items-center justify-center gap-2">

@@ -170,15 +170,9 @@ export const CallForPapers: React.FC = () => {
   return (
     <section
       id="call-for-papers"
-      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+      className="relative min-h-screen py-20 px-6 overflow-hidden"
+      style={{ backgroundColor: "rgb(153, 173, 193)" }}
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-indigo-100/30 to-blue-100/30 rounded-full blur-3xl animate-pulse delay-500" />
-      </div>
-
       <motion.div
         className="relative z-10 max-w-7xl mx-auto"
         variants={container}

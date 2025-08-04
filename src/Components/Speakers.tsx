@@ -206,14 +206,9 @@ export const Speakers: React.FC = () => {
   return (
     <section
       id="speakers"
-      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+      className="relative min-h-screen py-20 px-6 overflow-hidden"
+      style={{ backgroundColor: "rgb(153, 173, 193)" }}
     >
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
-      </div>
-
       <motion.div
         variants={container}
         initial="hidden"
@@ -300,38 +295,7 @@ export const Speakers: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="flex gap-3 pt-2">
-                      {speaker.social.linkedin && (
-                        <motion.a
-                          href={speaker.social.linkedin}
-                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Linkedin className="h-5 w-5 text-blue-600" />
-                        </motion.a>
-                      )}
-                      {speaker.social.twitter && (
-                        <motion.a
-                          href={speaker.social.twitter}
-                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Twitter className="h-5 w-5 text-blue-600" />
-                        </motion.a>
-                      )}
-                      {speaker.social.website && (
-                        <motion.a
-                          href={speaker.social.website}
-                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Globe className="h-5 w-5 text-blue-600" />
-                        </motion.a>
-                      )}
-                    </div>
+                   
                   </div>
                 </div>
               </motion.div>
@@ -401,23 +365,7 @@ export const Speakers: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="flex gap-2">
-                      {speaker.social.linkedin && (
-                        <div className="p-1.5 bg-slate-100 rounded-md">
-                          <Linkedin className="h-4 w-4 text-blue-600" />
-                        </div>
-                      )}
-                      {speaker.social.twitter && (
-                        <div className="p-1.5 bg-slate-100 rounded-md">
-                          <Twitter className="h-4 w-4 text-blue-600" />
-                        </div>
-                      )}
-                      {speaker.social.website && (
-                        <div className="p-1.5 bg-slate-100 rounded-md">
-                          <Globe className="h-4 w-4 text-blue-600" />
-                        </div>
-                      )}
-                    </div>
+                   
                   </div>
                 </motion.div>
               ))}
@@ -486,38 +434,7 @@ export const Speakers: React.FC = () => {
                       ))}
                     </div>
 
-                    <div className="flex gap-3 pt-2">
-                      {speaker.social.linkedin && (
-                        <motion.a
-                          href={speaker.social.linkedin}
-                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Linkedin className="h-5 w-5 text-blue-600" />
-                        </motion.a>
-                      )}
-                      {speaker.social.twitter && (
-                        <motion.a
-                          href={speaker.social.twitter}
-                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Twitter className="h-5 w-5 text-blue-600" />
-                        </motion.a>
-                      )}
-                      {speaker.social.website && (
-                        <motion.a
-                          href={speaker.social.website}
-                          className="p-2 bg-slate-100 rounded-lg hover:bg-blue-100 transition-colors"
-                          whileHover={{ scale: 1.1 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Globe className="h-5 w-5 text-blue-600" />
-                        </motion.a>
-                      )}
-                    </div>
+                   
                   </div>
                 </div>
               </motion.div>
@@ -527,7 +444,7 @@ export const Speakers: React.FC = () => {
 
         {/* CTA Section */}
         <motion.div variants={item} className="text-center pt-12">
-          <div className="bg-gradient-to-r from-slate-800 to-slate-700 rounded-3xl p-12 text-white">
+          <div className="bg-slate-800 rounded-3xl p-12 text-white">
             <h3 className="text-3xl font-bold mb-4">Want to Speak at Our Conference?</h3>
             <p className="text-slate-300 text-lg mb-8 max-w-2xl mx-auto">
               We're always looking for innovative speakers to share their expertise. Submit your proposal and join our
@@ -535,7 +452,7 @@ export const Speakers: React.FC = () => {
             </p>
             <Button
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-bold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
+              className="bg-blue-600 text-white font-bold px-8 py-4 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
             >
               <Users className="w-5 h-5 mr-2" />
               Submit Speaking Proposal

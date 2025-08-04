@@ -94,15 +94,9 @@ export const AbstractGuidelines: React.FC = () => {
   return (
     <section
       id="abstract-guidelines"
-      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+      className="relative min-h-screen py-20 px-6 overflow-hidden"
+      style={{ backgroundColor: "rgb(153, 173, 193)" }}
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-20 left-20 w-72 h-72 bg-gradient-to-r from-blue-200/20 to-indigo-200/20 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-purple-200/20 to-blue-200/20 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-gradient-to-r from-indigo-100/30 to-blue-100/30 rounded-full blur-3xl animate-pulse delay-500" />
-      </div>
-
       <motion.div
         variants={container}
         initial="hidden"
@@ -253,34 +247,34 @@ export const AbstractGuidelines: React.FC = () => {
               Download our comprehensive guidelines document with templates, examples, and submission checklist.
             </p>
             <Button
-  size="lg"
-  className="
-    group relative overflow-hidden rounded-2xl
-    bg-gradient-to-r from-blue-600 to-indigo-600
-    px-4 py-3 sm:px-8 sm:py-5 md:px-10 md:py-6
-    text-base sm:text-xl md:text-2xl font-bold text-white
-    shadow-2xl transition-all duration-500 hover:shadow-blue-500/25 hover:scale-105 border-0
-    w-full sm:w-auto
-  "
->
-  <motion.div className="flex items-center gap-2 sm:gap-4 justify-center">
-    <motion.div
-      animate={{ rotate: [0, 360] }}
-      transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-      className="group-hover:animate-none"
-    >
-      <Download className="w-5 h-5 sm:w-6 sm:h-6" />
-    </motion.div>
-    <span className="truncate">Download Complete Guidelines</span>
-    <motion.div
-      animate={{ x: [0, 8, 0] }}
-      transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-    >
-      <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
-    </motion.div>
-  </motion.div>
-  <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-</Button>
+              size="lg"
+              className="
+                group relative overflow-hidden rounded-2xl
+                bg-gradient-to-r from-blue-600 to-indigo-600
+                px-4 py-3 sm:px-8 sm:py-5 md:px-10 md:py-6
+                text-base sm:text-xl md:text-2xl font-bold text-white
+                shadow-2xl transition-all duration-500 hover:shadow-blue-500/25 hover:scale-105 border-0
+                w-full sm:w-auto
+              "
+            >
+              <motion.div className="flex items-center gap-2 sm:gap-4 justify-center">
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 4, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                  className="group-hover:animate-none"
+                >
+                  <Download className="w-5 h-5 sm:w-6 sm:h-6" />
+                </motion.div>
+                <span className="truncate">Download Complete Guidelines</span>
+                <motion.div
+                  animate={{ x: [0, 8, 0] }}
+                  transition={{ duration: 2, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
+                >
+                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6" />
+                </motion.div>
+              </motion.div>
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+            </Button>
           </div>
         </motion.div>
       </motion.div>

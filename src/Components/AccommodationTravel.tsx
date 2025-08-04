@@ -152,30 +152,9 @@ export const AccommodationTravel: React.FC = () => {
   return (
     <section
       id="accommodation"
-      className="relative min-h-screen py-20 px-6 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50/50 to-indigo-100/80"
+      className="relative min-h-screen py-20 px-6 overflow-hidden"
+      style={{ backgroundColor: "rgb(153, 173, 193)" }}
     >
-      {/* Enhanced Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-indigo-200/30 rounded-full blur-3xl"
-          animate={{
-            scale: [1, 1.3, 1],
-            opacity: [0.3, 0.6, 0.3],
-            rotate: [0, 180, 360],
-          }}
-          transition={{ duration: 25, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
-          animate={{
-            scale: [1.2, 1, 1.2],
-            opacity: [0.4, 0.7, 0.4],
-            rotate: [360, 180, 0],
-          }}
-          transition={{ duration: 30, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
-        />
-      </div>
-
       <motion.div
         variants={container}
         initial="hidden"
@@ -185,20 +164,20 @@ export const AccommodationTravel: React.FC = () => {
       >
         {/* Enhanced Heading */}
         <motion.div variants={item} className="text-center space-y-8">
-        <motion.h2
-  className="
-    text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
-    font-black leading-tight text-slate-800 text-center
-    flex flex-wrap items-center justify-center gap-x-2
-  "
-  whileHover={{ scale: 1.02 }}
-  transition={{ type: 'spring', stiffness: 300 }}
->
-  <span>Accommodation&nbsp;&amp;&nbsp;</span>
-  <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
-    Travel
-  </span>
-</motion.h2>
+          <motion.h2
+            className="
+              text-3xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl
+              font-black leading-tight text-slate-800 text-center
+              flex flex-wrap items-center justify-center gap-x-2
+            "
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: 'spring', stiffness: 300 }}
+          >
+            <span>Accommodation&nbsp;&amp;&nbsp;</span>
+            <span className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">
+              Travel
+            </span>
+          </motion.h2>
           <motion.p variants={item} className="text-2xl text-slate-600 max-w-4xl mx-auto leading-relaxed font-medium">
             Experience seamless travel and comfortable stays. Discover our carefully selected accommodations and
             comprehensive travel solutions designed to enhance your conference journey.

@@ -151,8 +151,60 @@ export const Registration: React.FC = () => {
     setSelectedCategory("")
   }
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
+
   const handleInputChange = (field: string, value: string | boolean | File | null) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+    try {
+      // Omit proofOfPayment for now
+      const { proofOfPayment, ...submissionData } = formData;
+      const response = await fetch('http://localhost:5000/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(submissionData),
+      });
+      if (response.ok) {
+        setSuccess(true);
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          organization: "",
+          department: "",
+          designation: "",
+          cityCountry: "",
+          category: "",
+          participationMode: "",
+          culturalVisit: "",
+          totalFee: "",
+          transactionId: "",
+          paymentDate: "",
+          bankName: "",
+          proofOfPayment: null,
+          confirmAccuracy: false,
+          agreeConduct: false,
+        });
+        setShowForm(false); // Optionally close form
+        console.log('Registration successful!');
+      } else {
+        setError('Registration failed. Please try again.');
+        console.error('Registration failed.');
+      }
+    } catch (err) {
+      setError('Network error. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -188,7 +240,7 @@ export const Registration: React.FC = () => {
         whileInView="visible"
         viewport={{ once: true, amount: 0.2 }}
         className="relative z-10 max-w-7xl mx-auto space-y-16"
-      >
+      />
         {/* Enhanced Heading */}
         <motion.div variants={item} className="text-center space-y-8">
           <motion.h2
@@ -346,7 +398,8 @@ export const Registration: React.FC = () => {
 
                 {/* Enhanced Form Content */}
                 <div className="max-h-[calc(90vh-200px)] overflow-y-auto">
-                  <div className="p-8 space-y-8">
+                  <form className="p-8 space-y-8" onSubmit={handleSubmit}>
+
                     {/* Personal Information Section */}
                     <motion.div 
                       className="space-y-6"
@@ -694,88 +747,97 @@ export const Registration: React.FC = () => {
                       <Button
                         type="submit"
                         className="w-full h-14 bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300"
-                        disabled={!formData.confirmAccuracy || !formData.agreeConduct}
+                        disabled={loading || !formData.confirmAccuracy || !formData.agreeConduct}
                       >
                         <motion.div className="flex items-center justify-center gap-3">
-                          <CheckCircle className="w-6 h-6" />
-                          Complete Registration
-                          <motion.div
-                            animate={{ x: [0, 5, 0] }}
-                            transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
-                          >
-                            <ArrowRight className="w-6 h-6" />
-                          </motion.div>
+                          {loading ? (
+                            <span className="animate-spin mr-2">⏳</span>
+                          ) : (
+                            <CheckCircle className="w-6 h-6" />
+                          )}
+                          {loading ? "Submitting..." : "Complete Registration"}
+                          {!loading && (
+                            <motion.div
+                              animate={{ x: [0, 5, 0] }}
+                              transition={{ duration: 1.5, repeat: Number.POSITIVE_INFINITY }}
+                            >
+                              <ArrowRight className="w-6 h-6" />
+                            </motion.div>
+                          )}
                         </motion.div>
                       </Button>
                     </motion.div>
+
+                    {/* Feedback messages */}
+                    {error && (
+                      <div className="text-red-600 font-semibold text-center mb-4">{error}</div>
+                    )}
+                    {success && (
+                      <div className="text-green-600 font-semibold text-center mb-4">Registration successful!</div>
+                    )}
+                  </form>
                   </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
-        </AnimatePresence>
 
-        {/* Registration Includes & Payment Details */}
-        <motion.div
-          variants={item}
-          className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 p-8"
-        >
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-slate-800">Registration Includes</h3>
-            <ul className="space-y-3">
-              {commonBenefits.map((benefit, idx) => (
-                <motion.li
-                  key={idx}
-                  className="flex items-start gap-3"
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.5 }}
-                  transition={{ delay: idx * 0.05 }}
-                >
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span className="text-slate-700 font-medium">{benefit}</span>
-                </motion.li>
-              ))}
-            </ul>
-          </div>
+                  {/* Registration Benefits and Information */}
+                  <div className="p-8 bg-gradient-to-br from-slate-50 to-blue-50/30 space-y-8">
+                    <div className="space-y-6">
+                      <h3 className="text-2xl font-bold text-slate-800">Registration Includes</h3>
+                      <ul className="space-y-3">
+                        {commonBenefits.map((benefit, idx) => (
+                          <motion.li
+                            key={idx}
+                            className="flex items-start gap-3"
+                            initial={{ opacity: 0, x: -20 }}
+                            whileInView={{ opacity: 1, x: 0 }}
+                            viewport={{ once: true, amount: 0.5 }}
+                            transition={{ delay: idx * 0.05 }}
+                          >
+                            <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                            <span className="text-slate-700 font-medium">{benefit}</span>
+                          </motion.li>
+                        ))}
+                      </ul>
+                    </div>
 
-          <div className="space-y-6">
-            <h3 className="text-2xl font-bold text-slate-800">Important Information</h3>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ delay: 0.2 }}
-              className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-6 border border-slate-200 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <CreditCard className="h-6 w-6 text-blue-600" />
-                <span className="font-bold text-slate-800">Payment Methods</span>
-              </div>
-              <p className="text-sm text-slate-600 leading-relaxed">
-                We accept bank transfers and online payments. Detailed payment instructions will be provided after
-                registration.
-              </p>
-            </motion.div>
+                    <div className="space-y-6">
+                      <h3 className="text-2xl font-bold text-slate-800">Important Information</h3>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ delay: 0.2 }}
+                        className="bg-gradient-to-br from-slate-50 to-gray-50 rounded-2xl p-6 border border-slate-200 shadow-lg"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <CreditCard className="h-6 w-6 text-blue-600" />
+                          <span className="font-bold text-slate-800">Payment Methods</span>
+                        </div>
+                        <p className="text-sm text-slate-600 leading-relaxed">
+                          We accept bank transfers and online payments. Detailed payment instructions will be provided after
+                          registration.
+                        </p>
+                      </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.5 }}
-              transition={{ delay: 0.3 }}
-              className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200 shadow-lg"
-            >
-              <div className="flex items-center gap-3 mb-3">
-                <Calendar className="h-6 w-6 text-amber-600" />
-                <span className="font-bold text-amber-800">Registration Deadline</span>
-              </div>
-              <p className="text-sm text-slate-700 font-medium leading-relaxed">October 6, 2025</p>
-            </motion.div>
-          </div>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, amount: 0.5 }}
+                        transition={{ delay: 0.3 }}
+                        className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl p-6 border border-amber-200 shadow-lg"
+                      >
+                        <div className="flex items-center gap-3 mb-3">
+                          <Calendar className="h-6 w-6 text-amber-600" />
+                          <span className="font-bold text-amber-800">Registration Deadline</span>
+                        </div>
+                        <p className="text-sm text-slate-700 font-medium leading-relaxed">October 6, 2025</p>
+                      </motion.div>
+                    </div>
+                  </div>
         </motion.div>
       </motion.div>
+      )}
+    </AnimatePresence>
     </section>
   )
 }
-
 export default Registration
