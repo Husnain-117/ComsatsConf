@@ -77,3 +77,11 @@ $RECYCLE.BIN/
 # Custom
 *.bak
 *.tmp
+
+# Media / Documents
+public/*.pdf
+public/*.png
+public/*.jpg
+public/*.jpeg
+public/*.svg
+*.pdf
