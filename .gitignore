@@ -78,11 +78,4 @@ $RECYCLE.BIN/
 *.bak
 *.tmp
 
-# Media / Documents
-public/*.png
-public/*.jpg
-public/*.jpeg
-public/*.svg
-*.pdf
-# Allow brochure PDF to be committed
-!public/brochure.pdf
+
